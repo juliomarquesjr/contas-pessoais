@@ -7,7 +7,7 @@ import { AddTransactionFab } from "@/components/add-transaction-fab";
 import { TransactionItem } from "@/components/transaction-item";
 import { CopyMonthButton } from "@/components/copy-month-button";
 import { PageHeader } from "@/components/ui/page-header";
-import { ArrowDownRight, ArrowUpRight, Inbox, Clock } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Inbox, Clock, CopyPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -45,6 +45,7 @@ export default async function MonthPage({
         eyebrow="Financeiro"
         title="Lançamentos"
         subtitle="Entradas e saídas do mês"
+        action={<CopyMonthButton monthKey={monthKey} />}
       />
 
       <div className="space-y-5">
@@ -100,17 +101,16 @@ export default async function MonthPage({
         </div>
 
         {txs.length === 0 ? (
-          <div className="space-y-4">
-            <div className="flex flex-col items-center rounded-3xl border border-dashed border-border bg-card px-6 py-10 text-center">
-              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-primary">
-                <Inbox className="h-6 w-6" />
-              </div>
-              <p className="font-medium">Nenhum lançamento neste mês</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Toque no + para adicionar ou copie o mês anterior.
-              </p>
+          <div className="flex flex-col items-center rounded-3xl border border-dashed border-border bg-card px-6 py-10 text-center">
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-primary">
+              <Inbox className="h-6 w-6" />
             </div>
-            <CopyMonthButton monthKey={monthKey} />
+            <p className="font-medium">Nenhum lançamento neste mês</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Toque no + para adicionar, ou use o ícone{" "}
+              <CopyPlus className="inline h-3.5 w-3.5 -translate-y-0.5 text-primary" />{" "}
+              no topo para copiar o mês anterior.
+            </p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -128,7 +128,6 @@ export default async function MonthPage({
                 ))}
               </Section>
             )}
-            <CopyMonthButton monthKey={monthKey} />
           </div>
         )}
 
