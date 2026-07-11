@@ -43,6 +43,12 @@ export function BottomNav() {
           style={{ WebkitMaskImage: NOTCH, maskImage: NOTCH }}
         />
 
+        {/* Halo fosco preenchendo o vão da gota (evita o fundo nítido por baixo) */}
+        <span
+          aria-hidden
+          className="absolute left-1/2 top-0 z-0 h-[84px] w-[84px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-card/90 backdrop-blur-lg"
+        />
+
         {/* Botão central (Início) saindo pela gota */}
         <Link
           href="/"
@@ -51,7 +57,7 @@ export function BottomNav() {
         >
           <span
             className={cn(
-              "flex h-[58px] w-[58px] items-center justify-center rounded-full text-primary-foreground transition active:scale-95",
+              "flex h-[58px] w-[58px] items-center justify-center rounded-full border-4 border-card text-primary-foreground transition active:scale-95",
               "bg-gradient-to-br from-primary to-[#a855f7]",
               homeActive
                 ? "shadow-[0_8px_20px_-4px_rgba(124,58,237,0.55)]"
