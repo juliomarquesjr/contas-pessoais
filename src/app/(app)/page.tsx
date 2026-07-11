@@ -132,7 +132,7 @@ export default async function HomePage() {
             <Avatar
               src={me?.avatarUrl}
               name={name}
-              className="h-11 w-11 rounded-full text-base shadow-sm"
+              className="h-12 w-12 rounded-2xl text-lg shadow-sm ring-2 ring-card"
             />
           </Link>
         }
