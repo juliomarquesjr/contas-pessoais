@@ -30,6 +30,10 @@ export const users = pgTable("users", {
   name: varchar("name", { length: 120 }).notNull(),
   email: varchar("email", { length: 200 }).notNull().unique(),
   passwordHash: text("password_hash").notNull(),
+  phone: varchar("phone", { length: 40 }),
+  avatarUrl: text("avatar_url"),
+  accentColor: varchar("accent_color", { length: 20 }),
+  theme: varchar("theme", { length: 10 }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

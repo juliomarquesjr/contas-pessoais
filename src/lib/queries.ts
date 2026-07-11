@@ -7,6 +7,7 @@ import {
   shoppingLists,
   shoppingListItems,
   users,
+  households,
 } from "@/lib/schema";
 import { monthRange } from "@/lib/dates";
 
@@ -143,10 +144,54 @@ export async function getShoppingList(householdId: number, listId: number) {
   return { ...list, items };
 }
 
+export async function getHouseholdName(householdId: number): Promise<string> {
+  const rows = await db
+    .select({ name: households.name })
+    .from(households)
+    .where(eq(households.id, householdId))
+    .limit(1);
+  return rows[0]?.name ?? "Nossa Casa";
+}
+
 export async function getMembers(householdId: number) {
   return db
-    .select({ id: users.id, name: users.name, email: users.email })
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      phone: users.phone,
+      avatarUrl: users.avatarUrl,
+    })
     .from(users)
     .where(eq(users.householdId, householdId))
     .orderBy(asc(users.name));
+}
+
+export type CurrentUser = {
+  id: number;
+  name: string;
+  email: string;
+  phone: string | null;
+  avatarUrl: string | null;
+  accentColor: string | null;
+  theme: string | null;
+};
+
+export async function getCurrentUser(
+  userId: number,
+): Promise<CurrentUser | null> {
+  const rows = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      phone: users.phone,
+      avatarUrl: users.avatarUrl,
+      accentColor: users.accentColor,
+      theme: users.theme,
+    })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  return rows[0] ?? null;
 }

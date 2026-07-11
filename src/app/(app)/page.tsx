@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireSession } from "@/lib/session";
-import { getMonthTransactions } from "@/lib/queries";
+import { getMonthTransactions, getCurrentUser } from "@/lib/queries";
+import { Avatar } from "@/components/ui/avatar";
 import {
   currentMonthKey,
   prevMonthKey,
@@ -10,7 +11,6 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { sumAmounts, formatBRL } from "@/lib/money";
 import { PageHeader } from "@/components/ui/page-header";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { CategoryIcon } from "@/components/category-icon";
 import {
   ArrowUpRight,
@@ -30,12 +30,13 @@ import { cn } from "@/lib/utils";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const { householdId, name } = await requireSession();
+  const { userId, householdId, name } = await requireSession();
   const monthKey = currentMonthKey();
 
-  const [txs, prevTxs] = await Promise.all([
+  const [txs, prevTxs, me] = await Promise.all([
     getMonthTransactions(householdId, monthKey),
     getMonthTransactions(householdId, prevMonthKey(monthKey)),
+    getCurrentUser(userId),
   ]);
 
   const incomeTx = txs.filter((t) => t.type === "income");
@@ -126,7 +127,15 @@ export default async function HomePage() {
           </span>
         }
         subtitle="A saúde financeira da casa"
-        action={<ThemeToggle />}
+        action={
+          <Link href="/ajustes" aria-label="Abrir ajustes">
+            <Avatar
+              src={me?.avatarUrl}
+              name={name}
+              className="h-11 w-11 rounded-full text-base shadow-sm"
+            />
+          </Link>
+        }
       />
 
       <div className="space-y-4">
