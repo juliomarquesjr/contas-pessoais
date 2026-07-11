@@ -1,15 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { CategoryIcon } from "@/components/category-icon";
 import { CategoryForm } from "@/components/category-form";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { deleteCategory } from "@/app/(app)/actions/categories";
 import type { Category } from "@/lib/schema";
 
 export function CategoryManager({ categories }: { categories: Category[] }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Category | undefined>();
+  const [deleting, setDeleting] = useState<Category | undefined>();
 
   const income = categories.filter((c) => c.type === "income");
   const expense = categories.filter((c) => c.type === "expense");
@@ -69,16 +73,14 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
-                  <form action={deleteCategory}>
-                    <input type="hidden" name="id" value={cat.id} />
-                    <button
-                      type="submit"
-                      aria-label="Excluir categoria"
-                      className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-expense-soft hover:text-expense"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </form>
+                  <button
+                    type="button"
+                    aria-label="Excluir categoria"
+                    onClick={() => setDeleting(cat)}
+                    className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-expense-soft hover:text-expense"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
               ))}
             </div>
@@ -90,6 +92,28 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
         open={open}
         onClose={() => setOpen(false)}
         editing={editing}
+      />
+
+      <ConfirmDialog
+        open={!!deleting}
+        onClose={() => setDeleting(undefined)}
+        onConfirm={async () => {
+          if (!deleting) return;
+          const fd = new FormData();
+          fd.set("id", String(deleting.id));
+          await deleteCategory(fd);
+          router.refresh();
+        }}
+        tone="danger"
+        icon={<Trash2 className="h-6 w-6 text-expense" />}
+        title="Excluir categoria?"
+        description={
+          <>
+            {deleting?.name} será removida. Os lançamentos existentes ficam sem
+            categoria.
+          </>
+        }
+        confirmLabel="Excluir"
       />
     </div>
   );

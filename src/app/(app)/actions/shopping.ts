@@ -202,5 +202,6 @@ export async function convertListToExpense(formData: FormData): Promise<void> {
   revalidatePath(`/compras/${listId}`);
   revalidatePath("/compras");
   revalidatePath("/");
-  redirect("/");
+  revalidatePath("/mes");
+  redirect("/mes");
 }

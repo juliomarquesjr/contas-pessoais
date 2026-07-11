@@ -16,6 +16,7 @@ export type TransactionWithCategory = {
   description: string;
   amount: string;
   date: string;
+  paid: boolean;
   categoryId: number | null;
   categoryName: string | null;
   categoryColor: string | null;
@@ -34,6 +35,7 @@ export async function getMonthTransactions(
       description: transactions.description,
       amount: transactions.amount,
       date: transactions.date,
+      paid: transactions.paid,
       categoryId: transactions.categoryId,
       categoryName: categories.name,
       categoryColor: categories.color,

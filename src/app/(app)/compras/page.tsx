@@ -4,6 +4,7 @@ import { getShoppingLists, getSuppliers } from "@/lib/queries";
 import { formatBRL } from "@/lib/money";
 import { NewListButton } from "@/components/new-list-form";
 import { Card, CardContent } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
 import { ChevronRight, ShoppingCart, CheckCircle2, Store } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,12 +17,11 @@ export default async function ShoppingPage() {
 
   return (
     <div className="space-y-5">
-      <header>
-        <h1 className="text-xl font-bold">Compras</h1>
-        <p className="text-sm text-muted-foreground">
-          Suas listas por fornecedor ou local.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Organização"
+        title="Compras"
+        subtitle="Suas listas por fornecedor ou local"
+      />
 
       {lists.length === 0 ? (
         <div className="flex flex-col items-center rounded-3xl border border-dashed border-border bg-card px-6 py-10 text-center">

@@ -19,6 +19,7 @@ export type EditingTransaction = {
   amount: string;
   date: string;
   categoryId: number | null;
+  paid: boolean;
 };
 
 export function TransactionForm({
@@ -42,14 +43,16 @@ export function TransactionForm({
   const [type, setType] = useState<"income" | "expense">(
     editing?.type ?? "expense",
   );
+  const [paid, setPaid] = useState<boolean>(editing?.paid ?? false);
 
-  // Reseta o tipo ao (re)abrir a sheet — ajuste de estado durante o render,
+  // Reseta os campos ao (re)abrir a sheet — ajuste de estado durante o render,
   // padrão recomendado em vez de useEffect.
   const openKey = `${editing?.id ?? "new"}-${open}`;
   const [lastOpenKey, setLastOpenKey] = useState(openKey);
   if (openKey !== lastOpenKey) {
     setLastOpenKey(openKey);
     setType(editing?.type ?? "expense");
+    setPaid(editing?.paid ?? false);
   }
 
   useEffect(() => {
@@ -71,6 +74,7 @@ export function TransactionForm({
       >
         {editing && <input type="hidden" name="id" value={editing.id} />}
         <input type="hidden" name="type" value={type} />
+        <input type="hidden" name="paid" value={String(paid)} />
 
         {/* Toggle entrada/saída */}
         <div className="grid grid-cols-2 gap-1 rounded-full bg-muted p-1">
@@ -154,6 +158,40 @@ export function TransactionForm({
             />
           </div>
         </div>
+
+        {/* Já foi paga / recebida? */}
+        <button
+          type="button"
+          onClick={() => setPaid((p) => !p)}
+          aria-pressed={paid}
+          className="flex w-full items-center justify-between rounded-xl border border-border bg-card px-4 py-3 text-left"
+        >
+          <span>
+            <span className="block text-sm font-medium">
+              {type === "income" ? "Já recebido?" : "Já pago?"}
+            </span>
+            <span className="block text-xs text-muted-foreground">
+              {paid
+                ? type === "income"
+                  ? "Marcado como recebido"
+                  : "Marcado como pago"
+                : "Ainda pendente"}
+            </span>
+          </span>
+          <span
+            className={cn(
+              "relative h-7 w-12 shrink-0 rounded-full transition",
+              paid ? "bg-income" : "bg-muted-foreground/30",
+            )}
+          >
+            <span
+              className={cn(
+                "absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition",
+                paid ? "left-[1.375rem]" : "left-0.5",
+              )}
+            />
+          </span>
+        </button>
 
         {state?.error && (
           <p className="rounded-lg bg-expense-soft px-3 py-2 text-sm text-expense">

@@ -15,6 +15,7 @@ const txSchema = z.object({
   amount: z.coerce.number().positive("Valor deve ser maior que zero"),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida"),
   categoryId: z.coerce.number().int().positive().optional(),
+  paid: z.preprocess((v) => v === "true" || v === "on", z.boolean()),
 });
 
 export type TxState = { error?: string; ok?: boolean } | undefined;
@@ -31,6 +32,7 @@ export async function addTransaction(
     amount: formData.get("amount"),
     date: formData.get("date"),
     categoryId: formData.get("categoryId") || undefined,
+    paid: formData.get("paid"),
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
@@ -44,9 +46,11 @@ export async function addTransaction(
     amount: parsed.data.amount.toFixed(2),
     date: parsed.data.date,
     categoryId: parsed.data.categoryId ?? null,
+    paid: parsed.data.paid,
   });
 
   revalidatePath("/");
+  revalidatePath("/mes");
   revalidatePath("/graficos");
   return { ok: true };
 }
@@ -65,6 +69,7 @@ export async function updateTransaction(
     amount: formData.get("amount"),
     date: formData.get("date"),
     categoryId: formData.get("categoryId") || undefined,
+    paid: formData.get("paid"),
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
@@ -78,6 +83,7 @@ export async function updateTransaction(
       amount: parsed.data.amount.toFixed(2),
       date: parsed.data.date,
       categoryId: parsed.data.categoryId ?? null,
+      paid: parsed.data.paid,
       updatedAt: new Date(),
     })
     .where(
@@ -85,6 +91,7 @@ export async function updateTransaction(
     );
 
   revalidatePath("/");
+  revalidatePath("/mes");
   revalidatePath("/graficos");
   return { ok: true };
 }
@@ -101,6 +108,7 @@ export async function deleteTransaction(formData: FormData): Promise<void> {
     );
 
   revalidatePath("/");
+  revalidatePath("/mes");
   revalidatePath("/graficos");
 }
 
@@ -126,6 +134,7 @@ export async function copyPreviousMonth(formData: FormData): Promise<void> {
 
   if (source.length === 0) {
     revalidatePath("/");
+    revalidatePath("/mes");
     return;
   }
 
@@ -143,11 +152,31 @@ export async function copyPreviousMonth(formData: FormData): Promise<void> {
       amount: t.amount,
       date: newDate,
       categoryId: t.categoryId,
+      paid: false, // mês novo entra como "a pagar/receber"
     };
   });
 
   await db.insert(transactions).values(copies);
 
   revalidatePath("/");
+  revalidatePath("/mes");
   revalidatePath("/graficos");
+}
+
+/** Alterna o status pago/recebido de um lançamento (toggle rápido). */
+export async function toggleTransactionPaid(formData: FormData): Promise<void> {
+  const { householdId } = await requireSession();
+  const id = Number(formData.get("id"));
+  const paid = formData.get("paid") === "true";
+  if (!id) return;
+
+  await db
+    .update(transactions)
+    .set({ paid: !paid, updatedAt: new Date() })
+    .where(
+      and(eq(transactions.id, id), eq(transactions.householdId, householdId)),
+    );
+
+  revalidatePath("/");
+  revalidatePath("/mes");
 }

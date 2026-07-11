@@ -18,7 +18,7 @@ export function NewListButton({ suppliers }: { suppliers: Supplier[] }) {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Nova lista"
-        className="fixed bottom-24 left-1/2 z-30 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/40 transition active:scale-95"
+        className="fixed bottom-24 right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/40 transition active:scale-95"
       >
         <Plus className="h-7 w-7" />
       </button>

@@ -13,7 +13,7 @@ export default function RegisterPage() {
   const [mode, setMode] = useState<"new" | "invite">("new");
 
   return (
-    <Card>
+    <Card className="rounded-3xl shadow-xl shadow-primary/5">
       <CardContent className="p-6">
         <div className="mb-5 grid grid-cols-2 gap-1 rounded-full bg-muted p-1">
           <button

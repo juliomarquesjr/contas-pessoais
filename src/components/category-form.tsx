@@ -1,10 +1,11 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
+import { Search } from "lucide-react";
 import { Sheet } from "@/components/ui/sheet";
 import { Input, Label } from "@/components/ui/input";
 import { SubmitButton } from "@/components/submit-button";
-import { CategoryIcon, ICON_OPTIONS } from "@/components/category-icon";
+import { ICON_LIBRARY } from "@/components/category-icon";
 import { cn } from "@/lib/utils";
 import {
   createCategory,
@@ -38,6 +39,7 @@ export function CategoryForm({
   );
   const [color, setColor] = useState(editing?.color ?? COLORS[0]);
   const [icon, setIcon] = useState(editing?.icon ?? "tag");
+  const [iconQuery, setIconQuery] = useState("");
 
   // Reseta os campos ao (re)abrir — ajuste de estado durante o render.
   const openKey = `${editing?.id ?? "new"}-${open}`;
@@ -47,7 +49,23 @@ export function CategoryForm({
     setType(editing?.type ?? "expense");
     setColor(editing?.color ?? COLORS[0]);
     setIcon(editing?.icon ?? "tag");
+    setIconQuery("");
   }
+
+  const filteredIcons = useMemo(() => {
+    const q = iconQuery
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+    if (!q) return ICON_LIBRARY;
+    return ICON_LIBRARY.filter((i) =>
+      `${i.name} ${i.keywords}`
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .includes(q),
+    );
+  }, [iconQuery]);
 
   useEffect(() => {
     if (state?.ok) onClose();
@@ -117,24 +135,41 @@ export function CategoryForm({
         </div>
 
         <div>
-          <Label>Ícone</Label>
-          <div className="grid grid-cols-6 gap-2">
-            {ICON_OPTIONS.map((name) => (
-              <button
-                key={name}
-                type="button"
-                onClick={() => setIcon(name)}
-                aria-label={`Ícone ${name}`}
-                className={cn(
-                  "flex h-11 items-center justify-center rounded-xl border transition",
-                  icon === name
-                    ? "border-primary bg-accent text-primary"
-                    : "border-border text-muted-foreground",
-                )}
-              >
-                <CategoryIcon name={name} className="h-5 w-5" />
-              </button>
-            ))}
+          <div className="mb-1.5 flex items-center justify-between">
+            <Label className="mb-0">Ícone</Label>
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={iconQuery}
+                onChange={(e) => setIconQuery(e.target.value)}
+                placeholder="Buscar ícone"
+                className="h-8 w-36 rounded-full border border-input bg-card pl-7 pr-3 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </div>
+          </div>
+          <div className="no-scrollbar grid max-h-44 grid-cols-6 gap-2 overflow-y-auto rounded-2xl border border-border bg-muted/40 p-2">
+            {filteredIcons.length === 0 ? (
+              <p className="col-span-6 py-6 text-center text-xs text-muted-foreground">
+                Nenhum ícone encontrado.
+              </p>
+            ) : (
+              filteredIcons.map(({ name, Icon }) => (
+                <button
+                  key={name}
+                  type="button"
+                  onClick={() => setIcon(name)}
+                  aria-label={`Ícone ${name}`}
+                  className={cn(
+                    "flex h-11 items-center justify-center rounded-xl border transition",
+                    icon === name
+                      ? "border-primary bg-accent text-primary"
+                      : "border-transparent bg-card text-muted-foreground",
+                  )}
+                >
+                  <Icon className="h-5 w-5" />
+                </button>
+              ))
+            )}
           </div>
         </div>
 

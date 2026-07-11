@@ -33,6 +33,7 @@ export async function createCategory(
   await db.insert(categories).values({ householdId, ...parsed.data });
   revalidatePath("/ajustes");
   revalidatePath("/");
+  revalidatePath("/mes");
   return { ok: true };
 }
 
@@ -60,6 +61,7 @@ export async function updateCategory(
     );
   revalidatePath("/ajustes");
   revalidatePath("/");
+  revalidatePath("/mes");
   return { ok: true };
 }
 
@@ -74,4 +76,5 @@ export async function deleteCategory(formData: FormData): Promise<void> {
     );
   revalidatePath("/ajustes");
   revalidatePath("/");
+  revalidatePath("/mes");
 }

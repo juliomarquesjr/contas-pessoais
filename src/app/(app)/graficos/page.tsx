@@ -11,6 +11,7 @@ import { CategoryDonut, type CategorySlice } from "@/components/charts/category-
 import { MonthlyBars } from "@/components/charts/monthly-bars";
 import { BalanceTrend } from "@/components/charts/balance-trend";
 import { Card, CardContent } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
 import { PieChart } from "lucide-react";
 
 export default async function ChartsPage({
@@ -61,12 +62,11 @@ export default async function ChartsPage({
 
   return (
     <div className="space-y-5">
-      <header>
-        <h1 className="text-xl font-bold">Gráficos</h1>
-        <p className="text-sm text-muted-foreground">
-          Acompanhe para onde o dinheiro está indo.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Relatórios"
+        title="Gráficos"
+        subtitle="Para onde o dinheiro está indo"
+      />
 
       <MonthSwitcher monthKey={monthKey} basePath="/graficos" />
 

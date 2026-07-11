@@ -64,6 +64,8 @@ export const transactions = pgTable(
     description: varchar("description", { length: 200 }).notNull(),
     amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
     date: date("date").notNull(),
+    // Para saídas = paga; para entradas = recebida.
+    paid: boolean("paid").notNull().default(false),
     createdBy: integer("created_by").references(() => users.id, {
       onDelete: "set null",
     }),

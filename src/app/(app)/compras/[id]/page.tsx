@@ -4,19 +4,14 @@ import { requireSession } from "@/lib/session";
 import { getShoppingList } from "@/lib/queries";
 import { formatBRL } from "@/lib/money";
 import { AddItemForm } from "@/components/add-item-form";
+import { ConvertListButton, DeleteListButton } from "@/components/list-actions";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  toggleItem,
-  deleteItem,
-  convertListToExpense,
-  deleteList,
-} from "@/app/(app)/actions/shopping";
+import { toggleItem, deleteItem } from "@/app/(app)/actions/shopping";
 import {
   ChevronLeft,
   Check,
   Trash2,
   Store,
-  Receipt,
   CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -153,28 +148,12 @@ export default async function ShoppingListPage({
       )}
 
       {list.items.length > 0 && list.status !== "done" && (
-        <form action={convertListToExpense}>
-          <input type="hidden" name="id" value={list.id} />
-          <button
-            type="submit"
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3.5 font-medium text-primary-foreground shadow-sm shadow-primary/30 transition active:scale-[0.99]"
-          >
-            <Receipt className="h-5 w-5" />
-            Lançar {formatBRL(total)} como gasto do mês
-          </button>
-        </form>
+        <ConvertListButton listId={list.id} total={total} />
       )}
 
-      <form action={deleteList} className="pt-2">
-        <input type="hidden" name="id" value={list.id} />
-        <button
-          type="submit"
-          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border px-4 py-3 text-sm font-medium text-expense transition hover:bg-expense-soft"
-        >
-          <Trash2 className="h-4 w-4" />
-          Excluir lista
-        </button>
-      </form>
+      <div className="pt-2">
+        <DeleteListButton listId={list.id} />
+      </div>
     </div>
   );
 }

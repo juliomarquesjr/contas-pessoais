@@ -1,6 +1,8 @@
 import { requireSession } from "@/lib/session";
 import { getCategories, getMembers } from "@/lib/queries";
 import { CategoryManager } from "@/components/category-manager";
+import { InstallCard } from "@/components/install-card";
+import { PageHeader } from "@/components/ui/page-header";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Card, CardContent } from "@/components/ui/card";
 import { logout } from "@/app/(app)/actions/auth";
@@ -15,10 +17,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-xl font-bold">Ajustes</h1>
-        <p className="text-sm text-muted-foreground">Você: {email}</p>
-      </header>
+      <PageHeader eyebrow="Conta" title="Ajustes" subtitle={email} />
 
       {/* Tema */}
       <Card>
@@ -35,6 +34,9 @@ export default async function SettingsPage() {
           <ThemeToggle />
         </CardContent>
       </Card>
+
+      {/* Instalar como app */}
+      <InstallCard />
 
       {/* Membros */}
       <div>
