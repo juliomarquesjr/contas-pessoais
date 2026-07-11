@@ -1,21 +1,25 @@
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
  * Cabeçalho padrão das telas — visual moderno e editorial:
  * uma "eyebrow" com traço de destaque, título grande e um subtítulo,
- * com ação opcional alinhada à direita. Distingue claramente o topo do conteúdo.
+ * com ação opcional à direita e botão "voltar" opcional (backHref).
  */
 export function PageHeader({
   eyebrow,
   title,
   subtitle,
   action,
+  backHref,
   className,
 }: {
   eyebrow?: React.ReactNode;
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   action?: React.ReactNode;
+  backHref?: string;
   className?: string;
 }) {
   return (
@@ -25,6 +29,16 @@ export function PageHeader({
         aria-hidden
         className="pointer-events-none absolute -top-6 right-0 h-24 w-40 rounded-full bg-primary/10 blur-3xl"
       />
+
+      {backHref && (
+        <Link
+          href={backHref}
+          aria-label="Voltar"
+          className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm transition hover:bg-muted"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </Link>
+      )}
 
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0">

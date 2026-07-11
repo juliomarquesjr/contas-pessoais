@@ -14,6 +14,7 @@ function revalidateAll() {
   revalidatePath("/");
   revalidatePath("/mes");
   revalidatePath("/ajustes");
+  revalidatePath("/ajustes/membros");
 }
 
 /** Confirma que o alvo pertence à mesma casa (para ações entre membros). */

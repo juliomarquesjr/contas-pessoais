@@ -29,17 +29,14 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between px-1">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-          Categorias
-        </h2>
+      <div className="flex justify-end px-1">
         <button
           type="button"
           onClick={openNew}
-          className="flex items-center gap-1 rounded-full bg-accent px-3 py-1.5 text-sm font-medium text-primary transition active:scale-95"
+          className="flex items-center gap-1 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition active:scale-95"
         >
           <Plus className="h-4 w-4" />
-          Nova
+          Nova categoria
         </button>
       </div>
 

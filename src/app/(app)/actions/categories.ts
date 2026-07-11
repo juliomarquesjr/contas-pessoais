@@ -32,6 +32,7 @@ export async function createCategory(
   }
   await db.insert(categories).values({ householdId, ...parsed.data });
   revalidatePath("/ajustes");
+  revalidatePath("/ajustes/categorias");
   revalidatePath("/");
   revalidatePath("/mes");
   return { ok: true };
@@ -60,6 +61,7 @@ export async function updateCategory(
       and(eq(categories.id, id), eq(categories.householdId, householdId)),
     );
   revalidatePath("/ajustes");
+  revalidatePath("/ajustes/categorias");
   revalidatePath("/");
   revalidatePath("/mes");
   return { ok: true };
@@ -75,6 +77,7 @@ export async function deleteCategory(formData: FormData): Promise<void> {
       and(eq(categories.id, id), eq(categories.householdId, householdId)),
     );
   revalidatePath("/ajustes");
+  revalidatePath("/ajustes/categorias");
   revalidatePath("/");
   revalidatePath("/mes");
 }

@@ -5,13 +5,32 @@ import { join } from "node:path";
 const OUT = join(process.cwd(), "public");
 mkdirSync(OUT, { recursive: true });
 
-// Marca: casa branca com uma moeda (seta de crescimento) — "finanças da casa".
+// Marca: cofrinho (porquinho) fofo com uma moeda — economia da família.
 function mark() {
   return `
-  <path d="M256 108 L420 248 a16 16 0 0 1 6 12 v140 a16 16 0 0 1 -16 16 H102 a16 16 0 0 1 -16 -16 V260 a16 16 0 0 1 6 -12 Z" fill="#ffffff"/>
-  <circle cx="256" cy="304" r="60" fill="#ede9fe"/>
-  <path d="M226 322 L250 300 L268 314 L294 282" fill="none" stroke="#7c3aed" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M278 280 L296 280 L296 298" fill="none" stroke="#7c3aed" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>`;
+  <!-- rabinho -->
+  <path d="M120 300 q-24 -6 -20 18 q4 16 20 8" fill="none" stroke="#ffffff" stroke-width="12" stroke-linecap="round"/>
+  <!-- patas -->
+  <rect x="196" y="378" width="34" height="52" rx="16" fill="#ffffff"/>
+  <rect x="288" y="378" width="34" height="52" rx="16" fill="#ffffff"/>
+  <!-- orelha -->
+  <path d="M296 232 q10 -46 48 -22 q-8 30 -48 22 Z" fill="#f0e9ff"/>
+  <!-- corpo -->
+  <ellipse cx="252" cy="300" rx="142" ry="106" fill="#ffffff"/>
+  <!-- focinho -->
+  <ellipse cx="378" cy="312" rx="30" ry="38" fill="#f0e6ff"/>
+  <ellipse cx="372" cy="299" rx="5.5" ry="8" fill="#7c3aed"/>
+  <ellipse cx="372" cy="325" rx="5.5" ry="8" fill="#7c3aed"/>
+  <!-- bochecha -->
+  <ellipse cx="320" cy="322" rx="16" ry="10" fill="#f9a8d4" opacity="0.75"/>
+  <!-- olho -->
+  <circle cx="300" cy="286" r="10" fill="#4c1d95"/>
+  <circle cx="304" cy="282" r="3.2" fill="#ffffff"/>
+  <!-- fenda da moeda -->
+  <rect x="214" y="212" width="78" height="15" rx="7.5" fill="#7c3aed"/>
+  <!-- moeda -->
+  <circle cx="253" cy="172" r="36" fill="#fbbf24"/>
+  <circle cx="253" cy="172" r="24" fill="none" stroke="#f59e0b" stroke-width="5"/>`;
 }
 
 function badge({ rounded }: { rounded: boolean }) {

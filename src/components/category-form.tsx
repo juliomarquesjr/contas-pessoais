@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { Sheet } from "@/components/ui/sheet";
 import { Input, Label } from "@/components/ui/input";
@@ -29,6 +30,7 @@ export function CategoryForm({
   onClose: () => void;
   editing?: Category;
 }) {
+  const router = useRouter();
   const action = editing ? updateCategory : createCategory;
   const [state, formAction] = useActionState<CatState, FormData>(
     action,
@@ -68,8 +70,11 @@ export function CategoryForm({
   }, [iconQuery]);
 
   useEffect(() => {
-    if (state?.ok) onClose();
-  }, [state, onClose]);
+    if (state?.ok) {
+      onClose();
+      router.refresh();
+    }
+  }, [state, onClose, router]);
 
   return (
     <Sheet

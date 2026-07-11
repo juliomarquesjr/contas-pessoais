@@ -5,15 +5,13 @@ import {
   getHouseholdName,
   getCurrentUser,
 } from "@/lib/queries";
-import { CategoryManager } from "@/components/category-manager";
 import { InstallCard } from "@/components/install-card";
 import { ProfileCard } from "@/components/profile-card";
 import { AppearanceRow } from "@/components/appearance-row";
-import { MemberManager } from "@/components/member-manager";
 import { PageHeader } from "@/components/ui/page-header";
-import { SettingsGroup } from "@/components/ui/settings";
+import { SettingsGroup, SettingsRow } from "@/components/ui/settings";
 import { logout } from "@/app/(app)/actions/auth";
-import { LogOut } from "lucide-react";
+import { LogOut, Users, Tags } from "lucide-react";
 
 export default async function SettingsPage() {
   const { userId, householdId } = await requireSession();
@@ -36,13 +34,26 @@ export default async function SettingsPage() {
 
       <ProfileCard me={me} householdName={householdName} />
 
+      <SettingsGroup title="Casa">
+        <SettingsRow
+          href="/ajustes/membros"
+          icon={<Users className="h-4 w-4" />}
+          label="Membros da casa"
+          description={`${members.length} ${
+            members.length === 1 ? "pessoa" : "pessoas"
+          }`}
+        />
+        <SettingsRow
+          href="/ajustes/categorias"
+          icon={<Tags className="h-4 w-4" />}
+          label="Categorias"
+          description={`${categories.length} categorias`}
+        />
+      </SettingsGroup>
+
       <SettingsGroup title="Preferências">
         <AppearanceRow accentColor={me.accentColor} theme={me.theme} />
       </SettingsGroup>
-
-      <MemberManager members={members} currentUserId={userId} />
-
-      <CategoryManager categories={categories} />
 
       <section>
         <h2 className="mb-2 px-1 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">

@@ -32,10 +32,7 @@ export function MemberManager({
   const [managing, setManaging] = useState<Member | null>(null);
 
   return (
-    <section>
-      <h2 className="mb-2 px-1 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-        Membros da casa
-      </h2>
+    <div>
       <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
         {members.map((m) => {
           const isSelf = m.id === currentUserId;
@@ -89,7 +86,7 @@ export function MemberManager({
         member={managing}
         onClose={() => setManaging(null)}
       />
-    </section>
+    </div>
   );
 }
 
