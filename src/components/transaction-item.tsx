@@ -181,56 +181,71 @@ export function TransactionItem({
           }}
           className="relative flex items-center gap-3 bg-card py-3 select-none"
         >
-          <div
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
-            style={{
-              backgroundColor: (tx.categoryColor ?? "#8b5cf6") + "22",
-              color: tx.categoryColor ?? "#8b5cf6",
-            }}
-          >
-            <CategoryIcon name={tx.categoryIcon} className="h-5 w-5" />
+          {/* Ícone da categoria com badge de status no canto */}
+          <div className="relative shrink-0">
+            <div
+              className="flex h-11 w-11 items-center justify-center rounded-full"
+              style={{
+                backgroundColor: (tx.categoryColor ?? "#8b5cf6") + "22",
+                color: tx.categoryColor ?? "#8b5cf6",
+              }}
+            >
+              <CategoryIcon name={tx.categoryIcon} className="h-5 w-5" />
+            </div>
+            <span
+              className={cn(
+                "absolute -bottom-0.5 -right-0.5 flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 border-card text-white",
+                tx.paid ? "bg-income" : "bg-amber-500",
+              )}
+            >
+              {tx.paid ? (
+                <Check className="h-2.5 w-2.5" strokeWidth={3.5} />
+              ) : (
+                <Clock className="h-2.5 w-2.5" strokeWidth={3} />
+              )}
+            </span>
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="truncate font-medium">{tx.description}</p>
-            <div className="mt-0.5 flex items-center gap-2">
-              <span className="truncate text-xs text-muted-foreground">
-                {tx.categoryName ?? "Sem categoria"} · {formatDateBR(tx.date)}
+            <p className="truncate font-medium leading-tight">
+              {tx.description}
+            </p>
+            <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span className="truncate">
+                {tx.categoryName ?? "Sem categoria"}
               </span>
-              <span
-                className={cn(
-                  "flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium",
-                  tx.paid
-                    ? "bg-income-soft text-income"
-                    : "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",
-                )}
-              >
-                {tx.paid ? (
-                  <Check className="h-3 w-3" />
-                ) : (
-                  <Clock className="h-3 w-3" />
-                )}
-                {tx.paid
-                  ? isIncome
-                    ? "Recebido"
-                    : "Pago"
-                  : isIncome
-                    ? "A receber"
-                    : "A pagar"}
-              </span>
-            </div>
+              <span className="text-muted-foreground/50">•</span>
+              <span className="shrink-0">{formatDateBR(tx.date)}</span>
+            </p>
           </div>
 
-          <span
-            className={cn(
-              "shrink-0 pr-1 font-semibold tabular-nums",
-              isIncome ? "text-income" : "text-expense",
-              !tx.paid && "opacity-50",
-            )}
-          >
-            {isIncome ? "+" : "−"}
-            {formatBRL(tx.amount)}
-          </span>
+          <div className="flex shrink-0 flex-col items-end pr-1">
+            <span
+              className={cn(
+                "font-semibold tabular-nums leading-tight",
+                isIncome ? "text-income" : "text-expense",
+              )}
+            >
+              {isIncome ? "+" : "−"}
+              {formatBRL(tx.amount)}
+            </span>
+            <span
+              className={cn(
+                "mt-0.5 text-[11px] font-medium",
+                tx.paid
+                  ? "text-income"
+                  : "text-amber-600 dark:text-amber-400",
+              )}
+            >
+              {tx.paid
+                ? isIncome
+                  ? "Recebido"
+                  : "Pago"
+                : isIncome
+                  ? "A receber"
+                  : "A pagar"}
+            </span>
+          </div>
         </div>
       </div>
 
