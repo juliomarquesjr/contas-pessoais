@@ -2,8 +2,10 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { Sheet } from "@/components/ui/sheet";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
 import { SubmitButton } from "@/components/submit-button";
+import { MoneyInput } from "@/components/money-input";
+import { CategoryPicker } from "@/components/category-picker";
 import { cn } from "@/lib/utils";
 import {
   addTransaction,
@@ -44,6 +46,9 @@ export function TransactionForm({
     editing?.type ?? "expense",
   );
   const [paid, setPaid] = useState<boolean>(editing?.paid ?? false);
+  const [categoryId, setCategoryId] = useState<number | null>(
+    editing?.categoryId ?? null,
+  );
 
   // Reseta os campos ao (re)abrir a sheet — ajuste de estado durante o render,
   // padrão recomendado em vez de useEffect.
@@ -53,6 +58,7 @@ export function TransactionForm({
     setLastOpenKey(openKey);
     setType(editing?.type ?? "expense");
     setPaid(editing?.paid ?? false);
+    setCategoryId(editing?.categoryId ?? null);
   }
 
   useEffect(() => {
@@ -60,6 +66,14 @@ export function TransactionForm({
   }, [state, onClose]);
 
   const filtered = categories.filter((c) => c.type === type);
+
+  function changeType(t: "income" | "expense") {
+    setType(t);
+    // Se a categoria escolhida não pertence ao novo tipo, limpa.
+    if (categoryId && !categories.some((c) => c.id === categoryId && c.type === t)) {
+      setCategoryId(null);
+    }
+  }
 
   return (
     <Sheet
@@ -75,12 +89,13 @@ export function TransactionForm({
         {editing && <input type="hidden" name="id" value={editing.id} />}
         <input type="hidden" name="type" value={type} />
         <input type="hidden" name="paid" value={String(paid)} />
+        <input type="hidden" name="categoryId" value={categoryId ?? ""} />
 
         {/* Toggle entrada/saída */}
         <div className="grid grid-cols-2 gap-1 rounded-full bg-muted p-1">
           <button
             type="button"
-            onClick={() => setType("expense")}
+            onClick={() => changeType("expense")}
             className={cn(
               "rounded-full py-2.5 text-sm font-semibold transition",
               type === "expense"
@@ -92,7 +107,7 @@ export function TransactionForm({
           </button>
           <button
             type="button"
-            onClick={() => setType("income")}
+            onClick={() => changeType("income")}
             className={cn(
               "rounded-full py-2.5 text-sm font-semibold transition",
               type === "income"
@@ -105,18 +120,8 @@ export function TransactionForm({
         </div>
 
         <div>
-          <Label htmlFor="amount">Valor (R$)</Label>
-          <Input
-            id="amount"
-            name="amount"
-            type="number"
-            inputMode="decimal"
-            step="0.01"
-            min="0"
-            placeholder="0,00"
-            defaultValue={editing?.amount ?? ""}
-            required
-          />
+          <Label htmlFor="amount">Valor</Label>
+          <MoneyInput name="amount" defaultValue={editing?.amount} />
         </div>
 
         <div>
@@ -130,32 +135,24 @@ export function TransactionForm({
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label htmlFor="categoryId">Categoria</Label>
-            <Select
-              id="categoryId"
-              name="categoryId"
-              defaultValue={editing?.categoryId ?? ""}
-            >
-              <option value="">Sem categoria</option>
-              {filtered.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="date">Data</Label>
-            <Input
-              id="date"
-              name="date"
-              type="date"
-              defaultValue={editing?.date ?? defaultDate}
-              required
-            />
-          </div>
+        <div>
+          <Label>Categoria</Label>
+          <CategoryPicker
+            categories={filtered}
+            value={categoryId}
+            onChange={setCategoryId}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="date">Data</Label>
+          <Input
+            id="date"
+            name="date"
+            type="date"
+            defaultValue={editing?.date ?? defaultDate}
+            required
+          />
         </div>
 
         {/* Já foi paga / recebida? */}
