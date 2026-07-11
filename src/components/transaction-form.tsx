@@ -116,7 +116,6 @@ export function TransactionForm({
             placeholder="0,00"
             defaultValue={editing?.amount ?? ""}
             required
-            autoFocus
           />
         </div>
 
