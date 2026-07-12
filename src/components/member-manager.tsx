@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useCloseOnSuccess } from "@/lib/use-close-on-success";
 import { UserPlus, ChevronRight, KeyRound, Mail } from "lucide-react";
 import { Sheet } from "@/components/ui/sheet";
 import { Avatar } from "@/components/ui/avatar";
@@ -103,12 +104,10 @@ function AddMemberSheet({
     undefined,
   );
 
-  useEffect(() => {
-    if (state?.ok) {
-      onClose();
-      router.refresh();
-    }
-  }, [state, onClose, router]);
+  useCloseOnSuccess(state, () => {
+    onClose();
+    router.refresh();
+  });
 
   return (
     <Sheet open={open} onClose={onClose} title="Adicionar membro">

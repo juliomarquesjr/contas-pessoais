@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
+import { useCloseOnSuccess } from "@/lib/use-close-on-success";
 import { useRouter } from "next/navigation";
 import { Sheet } from "@/components/ui/sheet";
 import { Input, Label } from "@/components/ui/input";
@@ -37,12 +38,10 @@ export function ProfileEditor({
     }
   }
 
-  useEffect(() => {
-    if (state?.ok) {
-      onClose();
-      router.refresh();
-    }
-  }, [state, onClose, router]);
+  useCloseOnSuccess(state, () => {
+    onClose();
+    router.refresh();
+  });
 
   return (
     <Sheet open={open} onClose={onClose} title="Editar perfil">

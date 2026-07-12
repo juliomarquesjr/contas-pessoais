@@ -1,12 +1,13 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { Sheet } from "@/components/ui/sheet";
 import { Input, Label } from "@/components/ui/input";
 import { SubmitButton } from "@/components/submit-button";
 import { ICON_LIBRARY } from "@/components/category-icon";
+import { useCloseOnSuccess } from "@/lib/use-close-on-success";
 import { cn } from "@/lib/utils";
 import {
   createCategory,
@@ -69,12 +70,10 @@ export function CategoryForm({
     );
   }, [iconQuery]);
 
-  useEffect(() => {
-    if (state?.ok) {
-      onClose();
-      router.refresh();
-    }
-  }, [state, onClose, router]);
+  useCloseOnSuccess(state, () => {
+    onClose();
+    router.refresh();
+  });
 
   return (
     <Sheet

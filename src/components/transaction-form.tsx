@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 import { Sheet } from "@/components/ui/sheet";
 import { Input, Label } from "@/components/ui/input";
 import { SubmitButton } from "@/components/submit-button";
 import { MoneyInput } from "@/components/money-input";
 import { CategoryPicker } from "@/components/category-picker";
+import { useCloseOnSuccess } from "@/lib/use-close-on-success";
 import { cn } from "@/lib/utils";
 import {
   addTransaction,
@@ -61,9 +62,7 @@ export function TransactionForm({
     setCategoryId(editing?.categoryId ?? null);
   }
 
-  useEffect(() => {
-    if (state?.ok) onClose();
-  }, [state, onClose]);
+  useCloseOnSuccess(state, onClose);
 
   const filtered = categories.filter((c) => c.type === type);
 
