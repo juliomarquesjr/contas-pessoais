@@ -4,7 +4,7 @@ import { currentMonthKey, defaultDateForMonth } from "@/lib/dates";
 import { sumAmounts, formatBRL } from "@/lib/money";
 import { MonthSwitcher } from "@/components/month-switcher";
 import { AddTransactionFab } from "@/components/add-transaction-fab";
-import { TransactionItem } from "@/components/transaction-item";
+import { MonthTransactions } from "@/components/month-transactions";
 import { CopyMonthButton } from "@/components/copy-month-button";
 import { PageHeader } from "@/components/ui/page-header";
 import { ArrowDownRight, ArrowUpRight, Inbox, Clock, CopyPlus } from "lucide-react";
@@ -113,22 +113,7 @@ export default async function MonthPage({
             </p>
           </div>
         ) : (
-          <div className="space-y-6">
-            {expenseTx.length > 0 && (
-              <Section title="Saídas">
-                {expenseTx.map((tx) => (
-                  <TransactionItem key={tx.id} tx={tx} categories={categories} />
-                ))}
-              </Section>
-            )}
-            {incomeTx.length > 0 && (
-              <Section title="Entradas">
-                {incomeTx.map((tx) => (
-                  <TransactionItem key={tx.id} tx={tx} categories={categories} />
-                ))}
-              </Section>
-            )}
-          </div>
+          <MonthTransactions transactions={txs} categories={categories} />
         )}
 
         <AddTransactionFab
@@ -137,24 +122,5 @@ export default async function MonthPage({
         />
       </div>
     </div>
-  );
-}
-
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section>
-      <h2 className="mb-1 px-1 text-sm font-semibold text-muted-foreground">
-        {title}
-      </h2>
-      <div className="divide-y divide-border rounded-2xl border border-border bg-card px-4">
-        {children}
-      </div>
-    </section>
   );
 }
