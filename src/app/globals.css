@@ -77,11 +77,14 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-tap-highlight-color: transparent;
+  /* Sem rolagem horizontal da página no mobile */
+  overflow-x: hidden;
 }
 
 /* Melhora a experiência mobile: sem zoom acidental, scroll suave */
 html {
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 /* Esconde a scrollbar horizontal do seletor de categorias etc. */
