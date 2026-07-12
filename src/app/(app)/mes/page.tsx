@@ -113,7 +113,11 @@ export default async function MonthPage({
             </p>
           </div>
         ) : (
-          <MonthTransactions transactions={txs} categories={categories} />
+          <MonthTransactions
+            transactions={txs}
+            categories={categories}
+            monthKey={monthKey}
+          />
         )}
 
         <AddTransactionFab

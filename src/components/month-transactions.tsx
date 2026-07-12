@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal, X, Inbox } from "lucide-react";
 import { Sheet } from "@/components/ui/sheet";
 import { TransactionItem } from "@/components/transaction-item";
+import { DateRangeCalendar } from "@/components/date-range-calendar";
 import { cn } from "@/lib/utils";
 import type { Category } from "@/lib/schema";
 import type { TransactionWithCategory } from "@/lib/queries";
@@ -21,9 +22,11 @@ function normalize(s: string) {
 export function MonthTransactions({
   transactions,
   categories,
+  monthKey,
 }: {
   transactions: TransactionWithCategory[];
   categories: Category[];
+  monthKey: string;
 }) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<Status>("all");
@@ -62,6 +65,11 @@ export function MonthTransactions({
     setType("all");
     setFrom("");
     setTo("");
+  }
+
+  function clearAll() {
+    clearFilters();
+    setQuery("");
   }
 
   return (
@@ -189,40 +197,34 @@ export function MonthTransactions({
           </FilterGroup>
 
           <div>
-            <p className="mb-2 text-sm font-medium">Período</p>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="mb-1 block text-xs text-muted-foreground">
-                  De
-                </label>
-                <input
-                  type="date"
-                  value={from}
-                  onChange={(e) => setFrom(e.target.value)}
-                  className="h-11 w-full rounded-xl border border-input bg-card px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs text-muted-foreground">
-                  Até
-                </label>
-                <input
-                  type="date"
-                  value={to}
-                  onChange={(e) => setTo(e.target.value)}
-                  className="h-11 w-full rounded-xl border border-input bg-card px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                />
-              </div>
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-sm font-medium">Período</p>
+              <p className="text-xs text-muted-foreground">
+                {from && to
+                  ? "Intervalo selecionado"
+                  : from
+                    ? "Toque no dia final"
+                    : "Toque para selecionar"}
+              </p>
             </div>
+            <DateRangeCalendar
+              monthKey={monthKey}
+              from={from}
+              to={to}
+              onChange={(f, t) => {
+                setFrom(f);
+                setTo(t);
+              }}
+            />
           </div>
 
           <div className="flex gap-2 pt-1">
             <button
               type="button"
-              onClick={clearFilters}
+              onClick={clearAll}
               className="flex-1 rounded-full border border-border py-3 text-sm font-medium text-muted-foreground transition hover:bg-muted"
             >
-              Limpar
+              Limpar tudo
             </button>
             <button
               type="button"
