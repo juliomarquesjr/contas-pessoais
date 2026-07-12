@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const CLOSE_THRESHOLD = 110; // px arrastados para fechar
 
 export function Sheet({
   open,
@@ -16,6 +18,11 @@ export function Sheet({
   title: string;
   children: React.ReactNode;
 }) {
+  const [dragY, setDragY] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const startY = useRef(0);
+  const activeRef = useRef(false);
+
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -37,30 +44,62 @@ export function Sheet({
 
   if (typeof document === "undefined") return null;
 
+  function onPointerDown(e: React.PointerEvent) {
+    startY.current = e.clientY;
+    activeRef.current = true;
+    setDragging(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }
+  function onPointerMove(e: React.PointerEvent) {
+    if (!activeRef.current) return;
+    const dy = e.clientY - startY.current;
+    setDragY(dy > 0 ? dy : 0);
+  }
+  function onPointerUp() {
+    if (!activeRef.current) return;
+    activeRef.current = false;
+    setDragging(false);
+    if (dragY > CLOSE_THRESHOLD) onClose();
+    setDragY(0);
+  }
+
   return createPortal(
     <div
       aria-hidden={!open}
       className={cn(
-        "fixed inset-0 z-50 flex items-end justify-center transition",
+        "fixed inset-0 z-50 flex items-end justify-center",
         open ? "pointer-events-auto" : "pointer-events-none",
       )}
     >
       <div
         onClick={onClose}
         className={cn(
-          "absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity",
+          "absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300",
           open ? "opacity-100" : "opacity-0",
         )}
       />
       <div
         role="dialog"
         aria-modal="true"
-        className={cn(
-          "relative max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-t-3xl border-t border-border bg-card p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl transition-transform duration-300",
-          open ? "translate-y-0" : "translate-y-full",
-        )}
+        style={{
+          transform: open ? `translateY(${dragY}px)` : "translateY(100%)",
+          transition: dragging
+            ? "none"
+            : "transform 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
+        }}
+        className="relative max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-t-3xl border-t border-border bg-card p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl"
       >
-        <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-muted-foreground/30" />
+        {/* Área de arrastar para fechar */}
+        <div
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          style={{ touchAction: "none" }}
+          className="-mt-2 mb-2 flex cursor-grab justify-center py-2 active:cursor-grabbing"
+        >
+          <div className="h-1.5 w-12 rounded-full bg-muted-foreground/30" />
+        </div>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold">{title}</h2>
           <button
