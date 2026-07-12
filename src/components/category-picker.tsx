@@ -14,7 +14,7 @@ export function CategoryPicker({
   onChange: (id: number | null) => void;
 }) {
   return (
-    <div className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+    <div className="grid grid-cols-4 gap-2">
       <Chip
         selected={value === null}
         onClick={() => onChange(null)}
@@ -54,7 +54,7 @@ function Chip({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex w-[70px] shrink-0 flex-col items-center gap-1.5 rounded-2xl border p-2 transition active:scale-95",
+        "flex w-full flex-col items-center gap-1.5 rounded-2xl border p-2 transition active:scale-95",
         selected
           ? "border-primary bg-accent"
           : "border-border bg-card",

@@ -56,7 +56,7 @@ export function Sheet({
         role="dialog"
         aria-modal="true"
         className={cn(
-          "relative w-full max-w-md rounded-t-3xl border-t border-border bg-card p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl transition-transform duration-300",
+          "relative max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-t-3xl border-t border-border bg-card p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl transition-transform duration-300",
           open ? "translate-y-0" : "translate-y-full",
         )}
       >
