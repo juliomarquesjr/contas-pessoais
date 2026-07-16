@@ -14,17 +14,15 @@ export function AddItemForm({ listId }: { listId: number }) {
         await addItem(fd);
         formRef.current?.reset();
       }}
-      className="flex items-end gap-2 rounded-2xl border border-border bg-card p-3"
+      className="flex items-center gap-2 rounded-2xl border border-border bg-card p-2.5 shadow-card"
     >
       <input type="hidden" name="listId" value={listId} />
-      <div className="flex-1">
-        <input
-          name="name"
-          placeholder="Adicionar item"
-          required
-          className="h-10 w-full rounded-lg border border-input bg-card px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        />
-      </div>
+      <input
+        name="name"
+        placeholder="Adicionar item..."
+        required
+        className="h-10 min-w-0 flex-1 rounded-[11px] border border-input bg-muted px-3 text-sm placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      />
       <input
         name="quantity"
         type="number"
@@ -33,7 +31,7 @@ export function AddItemForm({ listId }: { listId: number }) {
         min="0"
         defaultValue="1"
         aria-label="Quantidade"
-        className="h-10 w-14 rounded-lg border border-input bg-card px-2 text-center text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="h-10 w-12 shrink-0 rounded-[11px] border border-input bg-muted px-1 text-center font-mono text-sm tnum focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       />
       <input
         name="price"
@@ -43,12 +41,12 @@ export function AddItemForm({ listId }: { listId: number }) {
         min="0"
         placeholder="R$"
         aria-label="Preço unitário"
-        className="h-10 w-20 rounded-lg border border-input bg-card px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="h-10 w-16 shrink-0 rounded-[11px] border border-input bg-muted px-2 font-mono text-sm tnum placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       />
       <button
         type="submit"
-        aria-label="Adicionar"
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground"
+        aria-label="Adicionar item"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-linear-to-br from-primary to-primary-strong text-primary-foreground transition active:scale-95"
       >
         <Plus className="h-5 w-5" />
       </button>

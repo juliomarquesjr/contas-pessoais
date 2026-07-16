@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Palette, ChevronRight } from "lucide-react";
 import { AppearanceEditor } from "@/components/appearance-editor";
+import { ACCENTS, DEFAULT_ACCENT } from "@/lib/accents";
 
 const THEME_LABEL: Record<string, string> = {
   light: "Claro",
@@ -18,33 +19,38 @@ export function AppearanceRow({
   theme: string | null;
 }) {
   const [open, setOpen] = useState(false);
-  const accent = accentColor ?? "#7c3aed";
+  const accent = accentColor ?? DEFAULT_ACCENT;
+  // "Claro · Violeta" — o handoff mostra o nome do acento, não só o disco.
+  const accentLabel = ACCENTS.find(
+    (a) => a.value.toLowerCase() === accent.toLowerCase(),
+  )?.label;
+  const summary = [THEME_LABEL[theme ?? "system"], accentLabel]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <>
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-muted/50"
+        className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition hover:bg-muted/50"
       >
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-primary">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] bg-accent text-primary">
           <Palette className="h-4 w-4" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="font-medium">Aparência</p>
-          <p className="truncate text-xs text-muted-foreground">
-            Tema e cor de destaque
+          <p className="text-[16px] font-semibold">Aparência</p>
+          <p className="mt-px truncate text-[12.5px] text-muted-foreground">
+            Tema e cor de acento
           </p>
         </div>
-        <span className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">
-            {THEME_LABEL[theme ?? "system"]}
-          </span>
+        <span className="flex shrink-0 items-center gap-2">
+          <span className="text-[12.5px] text-muted-foreground">{summary}</span>
           <span
-            className="h-5 w-5 rounded-full border-2 border-card shadow"
+            className="h-4 w-4 rounded-full border-2 border-card shadow"
             style={{ backgroundColor: accent }}
           />
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          <ChevronRight className="h-4.5 w-4.5 text-faint" />
         </span>
       </button>
 

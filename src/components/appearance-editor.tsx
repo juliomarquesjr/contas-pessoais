@@ -6,13 +6,8 @@ import { useTheme } from "next-themes";
 import { Sun, Moon, MonitorSmartphone, Check } from "lucide-react";
 import { Sheet } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { ACCENTS, DEFAULT_ACCENT } from "@/lib/accents";
 import { updateAppearance } from "@/app/(app)/actions/profile";
-
-const ACCENTS = [
-  "#7c3aed", "#6d28d9", "#4f46e5", "#2563eb", "#0ea5e9",
-  "#0d9488", "#16a34a", "#ca8a04", "#ea580c", "#dc2626",
-  "#e11d48", "#db2777",
-];
 
 const THEMES = [
   { value: "light", label: "Claro", icon: Sun },
@@ -34,7 +29,7 @@ export function AppearanceEditor({
   const router = useRouter();
   const { setTheme } = useTheme();
   const [, startTransition] = useTransition();
-  const [accent, setAccent] = useState(accentColor ?? "#7c3aed");
+  const [accent, setAccent] = useState(accentColor ?? DEFAULT_ACCENT);
   const [themeSel, setThemeSel] = useState(theme ?? "system");
 
   function persist(next: { accentColor?: string; theme?: string }) {
@@ -62,8 +57,10 @@ export function AppearanceEditor({
     <Sheet open={open} onClose={onClose} title="Aparência">
       <div className="space-y-6">
         <div>
-          <p className="mb-2 text-sm font-medium">Tema</p>
-          <div className="grid grid-cols-3 gap-2">
+          <p className="mb-3 text-[11.5px] font-bold uppercase tracking-widest text-muted-foreground">
+            Tema
+          </p>
+          <div className="grid grid-cols-3 gap-2.5">
             {THEMES.map((t) => {
               const active = themeSel === t.value;
               return (
@@ -71,8 +68,9 @@ export function AppearanceEditor({
                   key={t.value}
                   type="button"
                   onClick={() => pickTheme(t.value)}
+                  aria-pressed={active}
                   className={cn(
-                    "flex flex-col items-center gap-1.5 rounded-2xl border py-3 text-xs font-medium transition",
+                    "flex flex-col items-center gap-1.5 rounded-[14px] border-2 py-3.5 text-xs font-semibold transition active:scale-95",
                     active
                       ? "border-primary bg-accent text-primary"
                       : "border-border text-muted-foreground",
@@ -87,18 +85,27 @@ export function AppearanceEditor({
         </div>
 
         <div>
-          <p className="mb-2 text-sm font-medium">Cor de destaque</p>
-          <div className="grid grid-cols-6 gap-3">
+          <p className="mb-3 text-[11.5px] font-bold uppercase tracking-widest text-muted-foreground">
+            Cor de acento
+          </p>
+          {/* Os 4 primeiros são os do handoff; os demais vieram da paleta
+              anterior e seguem selecionáveis para não quebrar quem já os usa. */}
+          <div className="grid grid-cols-5 gap-2.5">
             {ACCENTS.map((c) => {
-              const active = accent.toLowerCase() === c.toLowerCase();
+              const active = accent.toLowerCase() === c.value.toLowerCase();
               return (
                 <button
-                  key={c}
+                  key={c.value}
                   type="button"
-                  onClick={() => pickAccent(c)}
-                  aria-label={`Cor ${c}`}
-                  className="flex h-11 items-center justify-center rounded-2xl transition active:scale-95"
-                  style={{ backgroundColor: c }}
+                  onClick={() => pickAccent(c.value)}
+                  aria-label={c.label}
+                  aria-pressed={active}
+                  title={c.label}
+                  className={cn(
+                    "flex h-11 items-center justify-center rounded-[13px] transition active:scale-95",
+                    active && "ring-2 ring-foreground/30 ring-offset-2 ring-offset-card",
+                  )}
+                  style={{ backgroundColor: c.value }}
                 >
                   {active && <Check className="h-5 w-5 text-white" />}
                 </button>

@@ -3,9 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Pencil, Trash2 } from "lucide-react";
-import { CategoryIcon } from "@/components/category-icon";
+import { CategorySwatch } from "@/components/ui/category-swatch";
 import { CategoryForm } from "@/components/category-form";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import {
+  PageHeader,
+  ScreenBody,
+  SectionTitle,
+} from "@/components/ui/page-header";
 import { deleteCategory } from "@/app/(app)/actions/categories";
 import type { Category } from "@/lib/schema";
 
@@ -28,64 +33,70 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end px-1">
-        <button
-          type="button"
-          onClick={openNew}
-          className="flex items-center gap-1 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition active:scale-95"
-        >
-          <Plus className="h-4 w-4" />
-          Nova categoria
-        </button>
-      </div>
+    <>
+      {/* O cabeçalho vive aqui (e não na page) porque o botão "+ Nova" do
+          handoff fica no slot de ação e precisa abrir o sheet deste estado. */}
+      <PageHeader
+        backHref="/ajustes"
+        eyebrow="Personalização"
+        title="Categorias"
+        action={
+          <button
+            type="button"
+            onClick={openNew}
+            className="flex items-center gap-1 rounded-xl bg-accent px-3 py-2 text-[13px] font-semibold text-primary transition active:scale-95"
+          >
+            <Plus className="h-4 w-4" />
+            Nova
+          </button>
+        }
+      />
 
-      {[
-        { label: "Saídas", items: expense },
-        { label: "Entradas", items: income },
-      ].map((group) =>
-        group.items.length === 0 ? null : (
-          <div key={group.label}>
-            <p className="mb-1 px-1 text-xs font-medium text-muted-foreground">
-              {group.label}
-            </p>
-            <div className="divide-y divide-border rounded-2xl border border-border bg-card px-3">
-              {group.items.map((cat) => (
-                <div key={cat.id} className="flex items-center gap-3 py-2.5">
-                  <div
-                    className="flex h-9 w-9 items-center justify-center rounded-full"
-                    style={{
-                      backgroundColor: cat.color + "22",
-                      color: cat.color,
-                    }}
-                  >
-                    <CategoryIcon name={cat.icon} className="h-4 w-4" />
+      <ScreenBody>
+        {[
+          { label: "Saídas", items: expense },
+          { label: "Entradas", items: income },
+        ].map((group) =>
+          group.items.length === 0 ? null : (
+            <div key={group.label}>
+              <SectionTitle className="first:mt-0">
+                {group.label} · {group.items.length}
+              </SectionTitle>
+              <div className="divide-y divide-border rounded-[18px] border border-border bg-card px-3.5 shadow-card">
+                {group.items.map((cat) => (
+                  <div key={cat.id} className="flex items-center gap-3 py-2.5">
+                    <CategorySwatch
+                      color={cat.color}
+                      icon={cat.icon}
+                      size="sm"
+                      className="h-9 w-9 rounded-[10px]"
+                    />
+                    <span className="flex-1 truncate text-[15px] font-semibold">
+                      {cat.name}
+                    </span>
+                    <button
+                      type="button"
+                      aria-label={`Editar ${cat.name}`}
+                      onClick={() => openEdit(cat)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-faint transition hover:bg-muted hover:text-foreground"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label={`Excluir ${cat.name}`}
+                      onClick={() => setDeleting(cat)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-faint transition hover:bg-expense-soft hover:text-expense"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
-                  <span className="flex-1 truncate font-medium">
-                    {cat.name}
-                  </span>
-                  <button
-                    type="button"
-                    aria-label="Editar categoria"
-                    onClick={() => openEdit(cat)}
-                    className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Excluir categoria"
-                    onClick={() => setDeleting(cat)}
-                    className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-expense-soft hover:text-expense"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        ),
-      )}
+          ),
+        )}
+      </ScreenBody>
 
       <CategoryForm
         open={open}
@@ -114,6 +125,6 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
         }
         confirmLabel="Excluir"
       />
-    </div>
+    </>
   );
 }

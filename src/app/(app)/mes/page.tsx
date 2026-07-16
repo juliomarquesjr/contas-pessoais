@@ -6,8 +6,8 @@ import { MonthSwitcher } from "@/components/month-switcher";
 import { AddTransactionFab } from "@/components/add-transaction-fab";
 import { MonthTransactions } from "@/components/month-transactions";
 import { CopyMonthButton } from "@/components/copy-month-button";
-import { PageHeader } from "@/components/ui/page-header";
-import { ArrowDownRight, ArrowUpRight, Inbox, Clock, CopyPlus } from "lucide-react";
+import { PageHeader, ScreenBody } from "@/components/ui/page-header";
+import { Inbox, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -40,59 +40,58 @@ export default async function MonthPage({
   );
 
   return (
-    <div>
+    <>
       <PageHeader
         eyebrow="Financeiro"
         title="Lançamentos"
-        subtitle="Entradas e saídas do mês"
-        action={<CopyMonthButton monthKey={monthKey} />}
+        action={<MonthSwitcher monthKey={monthKey} basePath="/mes" />}
       />
 
-      <div className="space-y-5">
-        <MonthSwitcher monthKey={monthKey} basePath="/mes" />
-
-        {/* Saldo destaque */}
-        <div className="app-gradient rounded-3xl border border-border bg-card p-5">
-          <p className="text-sm text-muted-foreground">Saldo do mês</p>
+      <ScreenBody className="space-y-4">
+        {/* Saldo do mês */}
+        <div className="animate-fade-up rounded-[22px] border border-border bg-card p-5 shadow-card">
+          <span className="text-[13.5px] font-medium text-muted-foreground">
+            Saldo do mês
+          </span>
           <p
             className={cn(
-              "mt-1 text-3xl font-bold tabular-nums",
+              "snum mb-4 text-[44px] leading-[0.95]",
               balance >= 0 ? "text-foreground" : "text-expense",
             )}
           >
             {formatBRL(balance)}
           </p>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="rounded-2xl bg-income-soft/60 p-3">
-              <div className="flex items-center gap-1.5 text-income">
-                <ArrowUpRight className="h-4 w-4" />
-                <span className="text-xs font-medium">Entradas</span>
+
+          <div className="mb-3.5 flex border-t border-border pt-3.5">
+            <div className="flex-1 pr-3.5">
+              <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                Entradas
               </div>
-              <p className="mt-1 font-semibold tabular-nums text-income">
+              <div className="snum mt-1 text-[23px] leading-none text-income">
                 {formatBRL(totalIncome)}
-              </p>
-            </div>
-            <div className="rounded-2xl bg-expense-soft/60 p-3">
-              <div className="flex items-center gap-1.5 text-expense">
-                <ArrowDownRight className="h-4 w-4" />
-                <span className="text-xs font-medium">Saídas</span>
               </div>
-              <p className="mt-1 font-semibold tabular-nums text-expense">
+            </div>
+            <div className="flex-1 border-l border-border pl-3.5">
+              <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                Saídas
+              </div>
+              <div className="snum mt-1 text-[23px] leading-none text-expense">
                 {formatBRL(totalExpense)}
-              </p>
+              </div>
             </div>
           </div>
 
           {(pendingExpense > 0 || pendingIncome > 0) && (
-            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+            <div className="flex gap-2">
               {pendingExpense > 0 && (
-                <span className="flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 font-medium text-amber-700 dark:bg-amber-500/15 dark:text-amber-400">
-                  <Clock className="h-3 w-3" />A pagar {formatBRL(pendingExpense)}
+                <span className="flex flex-1 items-center gap-1.5 rounded-full bg-pending-soft px-2.5 py-1.5 font-mono text-xs font-semibold text-pending tnum">
+                  <Clock className="h-3.5 w-3.5 shrink-0" />A pagar{" "}
+                  {formatBRL(pendingExpense)}
                 </span>
               )}
               {pendingIncome > 0 && (
-                <span className="flex items-center gap-1 rounded-full bg-accent px-2.5 py-1 font-medium text-primary">
-                  <Clock className="h-3 w-3" />A receber{" "}
+                <span className="flex flex-1 items-center gap-1.5 rounded-full bg-receive-soft px-2.5 py-1.5 font-mono text-xs font-semibold text-receive tnum">
+                  <Clock className="h-3.5 w-3.5 shrink-0" />A receber{" "}
                   {formatBRL(pendingIncome)}
                 </span>
               )}
@@ -100,16 +99,18 @@ export default async function MonthPage({
           )}
         </div>
 
+        <CopyMonthButton monthKey={monthKey} />
+
         {txs.length === 0 ? (
-          <div className="flex flex-col items-center rounded-3xl border border-dashed border-border bg-card px-6 py-10 text-center">
-            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-primary">
+          <div className="flex flex-col items-center rounded-[20px] border border-dashed border-border-strong bg-card px-6 py-10 text-center">
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-[14px] bg-accent text-primary">
               <Inbox className="h-6 w-6" />
             </div>
-            <p className="font-medium">Nenhum lançamento neste mês</p>
+            <p className="font-display font-semibold">
+              Nenhum lançamento neste mês
+            </p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Toque no + para adicionar, ou use o ícone{" "}
-              <CopyPlus className="inline h-3.5 w-3.5 -translate-y-0.5 text-primary" />{" "}
-              no topo para copiar o mês anterior.
+              Toque no + para adicionar, ou copie o mês anterior no botão acima.
             </p>
           </div>
         ) : (
@@ -124,7 +125,7 @@ export default async function MonthPage({
           categories={categories}
           defaultDate={defaultDateForMonth(monthKey)}
         />
-      </div>
-    </div>
+      </ScreenBody>
+    </>
   );
 }

@@ -1,11 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Geist_Mono, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PwaRegister } from "@/components/pwa-register";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+// Números densos em listas e cifras: tabular-nums vem das utilities .mono/.tnum.
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+// Display: títulos, sobrelinhas e as cifras grandes (.snum).
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
 });
 
@@ -30,9 +42,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  // Acompanha --background nos dois temas (globals.css).
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f7f5ff" },
-    { media: "(prefers-color-scheme: dark)", color: "#131020" },
+    { media: "(prefers-color-scheme: light)", color: "#f4f1e8" },
+    { media: "(prefers-color-scheme: dark)", color: "#100e18" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -48,7 +61,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full">

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Store, Check } from "lucide-react";
+import { Fab } from "@/components/ui/fab";
 import { Sheet } from "@/components/ui/sheet";
 import { Input, Label } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,14 +23,7 @@ export function NewListButton({ suppliers }: { suppliers: Supplier[] }) {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label="Nova lista"
-        className="fixed bottom-24 right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/40 transition active:scale-95"
-      >
-        <Plus className="h-7 w-7" />
-      </button>
+      <Fab onClick={() => setOpen(true)} label="Nova lista" />
 
       <Sheet open={open} onClose={close} title="Nova lista de compras">
         <form action={createList} className="space-y-5">

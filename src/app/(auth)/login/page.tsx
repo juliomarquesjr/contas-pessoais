@@ -4,74 +4,70 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { Mail, Lock } from "lucide-react";
 import { authenticate } from "../actions";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/input";
+import { AuthField } from "../auth-field";
 import { SubmitButton } from "@/components/submit-button";
+import { LogoTile } from "@/components/ui/page-header";
 
 export default function LoginPage() {
   const [state, formAction] = useActionState(authenticate, undefined);
 
   return (
-    <Card className="rounded-3xl shadow-xl shadow-primary/5">
-      <CardContent className="p-6">
-        <div className="mb-5">
-          <h2 className="text-lg font-semibold">Bem-vindo de volta 👋</h2>
-          <p className="text-sm text-muted-foreground">
-            Entre para continuar cuidando das contas.
+    <>
+      {/* Bloco de marca ocupa o miolo; o formulário ancora embaixo. */}
+      <div className="flex flex-1 flex-col justify-center">
+        <LogoTile className="animate-float h-16 w-16 rounded-[19px] [&_svg]:h-8.5 [&_svg]:w-8.5" />
+        <p className="mb-3 mt-8 text-[11px] font-bold uppercase tracking-[0.24em] text-primary-ink">
+          O livro-caixa da família
+        </p>
+        <h1 className="font-display text-[44px] font-medium leading-[1.05] tracking-[-0.02em] text-white">
+          Bem-vindo
+          <br />
+          de volta.
+        </h1>
+        <p className="mt-4 max-w-70 text-[15.5px] leading-normal text-white/60">
+          Entre para continuar cuidando das contas da casa, mês a mês.
+        </p>
+      </div>
+
+      <form action={formAction} className="flex shrink-0 flex-col gap-3.5">
+        <AuthField
+          icon={Mail}
+          label="E-mail"
+          id="email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          placeholder="voce@casa.com"
+          required
+        />
+        <AuthField
+          icon={Lock}
+          label="Senha"
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          placeholder="••••••••"
+          required
+        />
+
+        {state?.error && (
+          <p className="rounded-xl border border-expense/40 bg-expense/15 px-3 py-2 text-sm text-white">
+            {state.error}
           </p>
-        </div>
+        )}
 
-        <form action={formAction} className="space-y-4">
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <div className="relative">
-              <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="voce@casa.com"
-                required
-                className="h-12 w-full rounded-xl border border-input bg-card pl-10 pr-4 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              />
-            </div>
-          </div>
+        <SubmitButton className="mt-1 w-full" size="lg">
+          Entrar
+        </SubmitButton>
 
-          <div>
-            <Label htmlFor="password">Senha</Label>
-            <div className="relative">
-              <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                placeholder="••••••••"
-                required
-                className="h-12 w-full rounded-xl border border-input bg-card pl-10 pr-4 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              />
-            </div>
-          </div>
-
-          {state?.error && (
-            <p className="rounded-lg bg-expense-soft px-3 py-2 text-sm text-expense">
-              {state.error}
-            </p>
-          )}
-
-          <SubmitButton className="w-full" size="lg">
-            Entrar
-          </SubmitButton>
-        </form>
-
-        <p className="mt-6 text-center text-sm text-muted-foreground">
+        <p className="mt-1 text-center text-[14.5px] text-white/55">
           Ainda não tem conta?{" "}
-          <Link href="/registrar" className="font-medium text-primary">
+          <Link href="/registrar" className="font-semibold text-primary-ink">
             Criar conta
           </Link>
         </p>
-      </CardContent>
-    </Card>
+      </form>
+    </>
   );
 }

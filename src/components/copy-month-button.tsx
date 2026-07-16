@@ -6,7 +6,13 @@ import { CopyPlus } from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { copyPreviousMonth } from "@/app/(app)/actions/transactions";
 
-/** Ícone no cabeçalho para copiar os lançamentos do mês anterior. */
+/**
+ * Copia os lançamentos do mês anterior.
+ *
+ * Ficava como ícone sem rótulo no cabeçalho — mas o slot direito do v2 é da
+ * navegação de mês, e um ícone mudo tinha descoberta ruim (o estado vazio
+ * precisava explicar o que ele fazia). Agora é um botão com texto.
+ */
 export function CopyMonthButton({ monthKey }: { monthKey: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -23,11 +29,10 @@ export function CopyMonthButton({ monthKey }: { monthKey: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label="Copiar lançamentos do mês anterior"
-        title="Copiar mês anterior"
-        className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm transition hover:bg-muted"
+        className="flex w-full items-center justify-center gap-2 rounded-[14px] border border-dashed border-border-strong py-3 text-[13.5px] font-semibold text-muted-foreground transition active:scale-[0.99]"
       >
-        <CopyPlus className="h-5 w-5" />
+        <CopyPlus className="h-4 w-4" />
+        Copiar lançamentos do mês anterior
       </button>
 
       <ConfirmDialog

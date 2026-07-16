@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { SectionTitle } from "@/components/ui/page-header";
 import { cn } from "@/lib/utils";
 
-/** Grupo de configurações: título curto em maiúsculas + card com linhas divididas. */
+/** Grupo de configurações: título de seção + card com linhas divididas. */
 export function SettingsGroup({
   title,
   children,
@@ -14,12 +15,8 @@ export function SettingsGroup({
 }) {
   return (
     <section className={className}>
-      {title && (
-        <h2 className="mb-2 px-1 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-          {title}
-        </h2>
-      )}
-      <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
+      {title && <SectionTitle className="mt-0">{title}</SectionTitle>}
+      <div className="divide-y divide-border overflow-hidden rounded-[18px] border border-border bg-card shadow-card">
         {children}
       </div>
     </section>
@@ -50,7 +47,7 @@ export function SettingsRow({
       {icon && (
         <span
           className={cn(
-            "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-primary",
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] bg-accent text-primary",
             iconClassName,
           )}
         >
@@ -58,14 +55,16 @@ export function SettingsRow({
         </span>
       )}
       <div className="min-w-0 flex-1">
-        <p className="truncate font-medium">{label}</p>
+        <p className="truncate text-[16px] font-semibold">{label}</p>
         {description && (
-          <p className="truncate text-xs text-muted-foreground">{description}</p>
+          <p className="mt-px truncate text-[12.5px] text-muted-foreground">
+            {description}
+          </p>
         )}
       </div>
       {right && <div className="shrink-0">{right}</div>}
       {href && !right && (
-        <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
+        <ChevronRight className="h-4.5 w-4.5 shrink-0 text-faint" />
       )}
     </>
   );
@@ -74,12 +73,12 @@ export function SettingsRow({
     return (
       <Link
         href={href}
-        className="flex items-center gap-3 px-4 py-3 transition hover:bg-muted/50"
+        className="flex items-center gap-3 px-4 py-3.5 transition hover:bg-muted/50"
       >
         {inner}
       </Link>
     );
   }
 
-  return <div className="flex items-center gap-3 px-4 py-3">{inner}</div>;
+  return <div className="flex items-center gap-3 px-4 py-3.5">{inner}</div>;
 }

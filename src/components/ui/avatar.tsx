@@ -14,7 +14,7 @@ export function Avatar({
   return (
     <div
       className={cn(
-        "relative flex shrink-0 items-center justify-center overflow-hidden bg-gradient-to-br from-primary to-[#a855f7] font-semibold text-primary-foreground",
+        "relative flex shrink-0 items-center justify-center overflow-hidden bg-linear-to-br from-primary to-primary-strong font-semibold text-primary-foreground",
         className,
       )}
     >

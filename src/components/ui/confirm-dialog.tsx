@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useMounted } from "@/lib/use-mounted";
 import { createPortal } from "react-dom";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -42,6 +43,11 @@ export function ConfirmDialog({
 }) {
   const [loading, setLoading] = useState(false);
 
+  /* O portal só existe depois de montar. `typeof document` como guarda dava
+     hydration mismatch: o servidor não renderiza portal, o cliente renderiza
+     já no primeiro passe — e o React encontrava um nó a mais na árvore. */
+  const mounted = useMounted();
+
   useEffect(() => {
     if (open) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "";
@@ -49,8 +55,6 @@ export function ConfirmDialog({
       document.body.style.overflow = "";
     };
   }, [open]);
-
-  if (typeof document === "undefined") return null;
 
   async function handleConfirm() {
     try {
@@ -62,11 +66,13 @@ export function ConfirmDialog({
     }
   }
 
+  if (!mounted) return null;
+
   return createPortal(
     <div
       aria-hidden={!open}
       className={cn(
-        "fixed inset-0 z-[60] flex items-center justify-center p-6 transition",
+        "fixed inset-0 z-60 flex items-center justify-center p-6 transition",
         open ? "pointer-events-auto" : "pointer-events-none",
       )}
     >

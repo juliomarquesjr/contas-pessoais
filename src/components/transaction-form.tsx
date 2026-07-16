@@ -91,14 +91,15 @@ export function TransactionForm({
         <input type="hidden" name="categoryId" value={categoryId ?? ""} />
 
         {/* Toggle entrada/saída */}
-        <div className="grid grid-cols-2 gap-1 rounded-full bg-muted p-1">
+        <div className="grid grid-cols-2 gap-1 rounded-[14px] border border-border bg-muted p-1.25">
           <button
             type="button"
             onClick={() => changeType("expense")}
+            aria-pressed={type === "expense"}
             className={cn(
-              "rounded-full py-2.5 text-sm font-semibold transition",
+              "rounded-[11px] py-2.5 text-[15px] font-semibold transition",
               type === "expense"
-                ? "bg-expense text-white shadow-sm"
+                ? "bg-linear-to-br from-expense to-[color-mix(in_srgb,var(--expense)_78%,#000)] text-white"
                 : "text-muted-foreground",
             )}
           >
@@ -107,10 +108,11 @@ export function TransactionForm({
           <button
             type="button"
             onClick={() => changeType("income")}
+            aria-pressed={type === "income"}
             className={cn(
-              "rounded-full py-2.5 text-sm font-semibold transition",
+              "rounded-[11px] py-2.5 text-[15px] font-semibold transition",
               type === "income"
-                ? "bg-income text-white shadow-sm"
+                ? "bg-linear-to-br from-income to-[color-mix(in_srgb,var(--income)_75%,#000)] text-white"
                 : "text-muted-foreground",
             )}
           >
@@ -120,7 +122,7 @@ export function TransactionForm({
 
         <div>
           <Label htmlFor="amount">Valor</Label>
-          <MoneyInput name="amount" defaultValue={editing?.amount} />
+          <MoneyInput name="amount" defaultValue={editing?.amount} tone={type} />
         </div>
 
         <div>
@@ -159,13 +161,22 @@ export function TransactionForm({
           type="button"
           onClick={() => setPaid((p) => !p)}
           aria-pressed={paid}
-          className="flex w-full items-center justify-between rounded-xl border border-border bg-card px-4 py-3 text-left"
+          className="flex w-full items-center justify-between rounded-[14px] border border-border bg-muted px-4 py-3.5 text-left"
         >
           <span>
-            <span className="block text-sm font-medium">
+            <span className="block text-[15px] font-semibold">
               {type === "income" ? "Já recebido?" : "Já pago?"}
             </span>
-            <span className="block text-xs text-muted-foreground">
+            <span
+              className={cn(
+                "mt-px block text-xs font-semibold",
+                paid
+                  ? "text-income"
+                  : type === "income"
+                    ? "text-receive"
+                    : "text-pending",
+              )}
+            >
               {paid
                 ? type === "income"
                   ? "Marcado como recebido"
@@ -176,12 +187,12 @@ export function TransactionForm({
           <span
             className={cn(
               "relative h-7 w-12 shrink-0 rounded-full transition",
-              paid ? "bg-income" : "bg-muted-foreground/30",
+              paid ? "bg-income" : "bg-border-strong",
             )}
           >
             <span
               className={cn(
-                "absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition",
+                "absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-all",
                 paid ? "left-[1.375rem]" : "left-0.5",
               )}
             />
@@ -194,8 +205,17 @@ export function TransactionForm({
           </p>
         )}
 
-        <SubmitButton className="w-full" size="lg">
-          {editing ? "Salvar" : "Adicionar"}
+        {/* O CTA do v2 carrega o tipo, na cor do tipo. */}
+        <SubmitButton
+          className="w-full"
+          size="lg"
+          variant={type === "income" ? "income" : "danger"}
+        >
+          {editing
+            ? "Salvar"
+            : type === "income"
+              ? "Adicionar entrada"
+              : "Adicionar saída"}
         </SubmitButton>
       </form>
     </Sheet>

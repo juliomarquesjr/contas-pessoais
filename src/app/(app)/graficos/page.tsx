@@ -11,7 +11,7 @@ import { CategoryDonut, type CategorySlice } from "@/components/charts/category-
 import { MonthlyBars } from "@/components/charts/monthly-bars";
 import { BalanceTrend } from "@/components/charts/balance-trend";
 import { Card, CardContent } from "@/components/ui/card";
-import { PageHeader } from "@/components/ui/page-header";
+import { PageHeader, ScreenBody } from "@/components/ui/page-header";
 import { PieChart } from "lucide-react";
 
 export default async function ChartsPage({
@@ -61,49 +61,60 @@ export default async function ChartsPage({
   const totalExpense = categorySlices.reduce((a, d) => a + d.value, 0);
 
   return (
-    <div className="space-y-5">
+    <>
       <PageHeader
         eyebrow="Relatórios"
         title="Gráficos"
-        subtitle="Para onde o dinheiro está indo"
+        action={<MonthSwitcher monthKey={monthKey} basePath="/graficos" />}
       />
 
-      <MonthSwitcher monthKey={monthKey} basePath="/graficos" />
-
-      <Card>
-        <CardContent className="p-5">
-          <h2 className="mb-3 font-semibold">Entradas x Saídas (6 meses)</h2>
-          <MonthlyBars data={monthly} />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-5">
-          <h2 className="mb-3 font-semibold">Evolução do saldo</h2>
-          <BalanceTrend data={monthly} />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-5">
-          <h2 className="mb-1 font-semibold">Saídas por categoria</h2>
-          <p className="mb-4 text-sm text-muted-foreground">
-            Total de saídas no mês: {formatBRL(totalExpense)}
-          </p>
-          {categorySlices.length > 0 ? (
-            <CategoryDonut data={categorySlices} />
-          ) : (
-            <div className="flex flex-col items-center py-8 text-center">
-              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-primary">
-                <PieChart className="h-6 w-6" />
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Sem saídas neste mês para exibir.
-              </p>
+      <ScreenBody className="space-y-4">
+        <Card className="animate-fade-up">
+          <CardContent className="p-5">
+            <div className="mb-3 flex items-baseline justify-between gap-2">
+              <h2 className="font-display text-[17px] font-semibold tracking-[-0.02em]">
+                Entradas × Saídas
+              </h2>
+              <span className="shrink-0 text-xs font-medium text-muted-foreground">
+                6 meses
+              </span>
             </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+            <MonthlyBars data={monthly} />
+          </CardContent>
+        </Card>
+
+        <Card className="animate-fade-up [animation-delay:60ms]">
+          <CardContent className="p-5">
+            <h2 className="mb-3 font-display text-[17px] font-semibold tracking-[-0.02em]">
+              Evolução do saldo
+            </h2>
+            <BalanceTrend data={monthly} />
+          </CardContent>
+        </Card>
+
+        <Card className="animate-fade-up [animation-delay:120ms]">
+          <CardContent className="p-5">
+            <h2 className="font-display text-[17px] font-semibold tracking-[-0.02em]">
+              Saídas por categoria
+            </h2>
+            <p className="mb-4 mt-0.5 font-mono text-[12.5px] text-muted-foreground tnum">
+              Total: {formatBRL(totalExpense)}
+            </p>
+            {categorySlices.length > 0 ? (
+              <CategoryDonut data={categorySlices} />
+            ) : (
+              <div className="flex flex-col items-center py-8 text-center">
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-[14px] bg-accent text-primary">
+                  <PieChart className="h-6 w-6" />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Sem saídas neste mês para exibir.
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </ScreenBody>
+    </>
   );
 }

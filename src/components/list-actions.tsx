@@ -22,10 +22,10 @@ export function ConvertListButton({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3.5 font-medium text-primary-foreground shadow-sm shadow-primary/30 transition active:scale-[0.99]"
+        className="flex w-full items-center justify-center gap-2 rounded-[15px] bg-linear-to-br from-primary to-primary-strong px-4 py-4 text-base font-semibold text-primary-foreground shadow-[0_14px_26px_-10px_color-mix(in_srgb,var(--primary)_60%,transparent)] transition active:scale-[0.99]"
       >
         <Receipt className="h-5 w-5" />
-        Lançar {formatBRL(total)} como gasto do mês
+        Lançar {formatBRL(total)} como gasto
       </button>
 
       <ConfirmDialog
@@ -55,13 +55,14 @@ export function DeleteListButton({ listId }: { listId: number }) {
   const [open, setOpen] = useState(false);
   return (
     <>
+      {/* Ícone no slot de ação do cabeçalho (tela 41 do handoff). */}
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border px-4 py-3 text-sm font-medium text-expense transition hover:bg-expense-soft"
+        aria-label="Excluir lista"
+        className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card text-faint transition hover:text-expense active:scale-95"
       >
-        <Trash2 className="h-4 w-4" />
-        Excluir lista
+        <Trash2 className="h-4.5 w-4.5" />
       </button>
 
       <ConfirmDialog

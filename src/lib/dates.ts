@@ -50,6 +50,12 @@ export function monthShortLabel(key: string): string {
   return format(parseMonthKey(key), "MMM/yy", { locale: ptBR });
 }
 
+/** "2026-07" -> "Jul 2026" (navegação de mês no cabeçalho) */
+export function monthCompactLabel(key: string): string {
+  const label = format(parseMonthKey(key), "MMM yyyy", { locale: ptBR });
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
 /** Data padrão (hoje) dentro de um mês, ou dia 1 se o mês não for o atual */
 export function defaultDateForMonth(key: string): string {
   const today = new Date();

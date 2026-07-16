@@ -1,6 +1,6 @@
 "use client";
 
-import { CategoryIcon } from "@/components/category-icon";
+import { CategorySwatch } from "@/components/ui/category-swatch";
 import { cn } from "@/lib/utils";
 import type { Category } from "@/lib/schema";
 
@@ -53,23 +53,22 @@ function Chip({
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={selected}
       className={cn(
-        "flex w-[70px] shrink-0 flex-col items-center gap-1.5 rounded-2xl border p-2 transition active:scale-95",
-        selected
-          ? "border-primary bg-accent"
-          : "border-border bg-card",
+        "flex w-20 shrink-0 flex-col items-center gap-1.75 rounded-[14px] border px-1.5 py-3 transition active:scale-95",
+        selected ? "border-primary/40 bg-accent" : "border-border bg-muted",
       )}
     >
-      <span
-        className="flex h-9 w-9 items-center justify-center rounded-full"
-        style={{ backgroundColor: color + "22", color }}
-      >
-        <CategoryIcon name={icon} className="h-[18px] w-[18px]" />
-      </span>
+      <CategorySwatch
+        color={color}
+        icon={icon ?? "tag"}
+        size="sm"
+        className="h-8.5 w-8.5 rounded-[10px]"
+      />
       <span
         className={cn(
-          "w-full truncate text-center text-[11px] leading-tight",
-          selected ? "font-semibold text-foreground" : "text-muted-foreground",
+          "w-full truncate text-center text-[11.5px] font-semibold leading-tight",
+          selected ? "text-primary" : "text-foreground-soft",
         )}
       >
         {label}

@@ -3,69 +3,122 @@
 /* Dark mode por classe (controlado pelo next-themes) */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Redesign v2 "Livro-caixa" — papel marfim no claro, tinta no escuro.
+ *
+ * Nomes de token: mantemos a semântica já usada no app, que difere do handoff:
+ *   handoff --muted (texto)  -> --muted-foreground   | --muted aqui é SUPERFÍCIE
+ *   handoff --card-2         -> --muted (superfície de inputs)
+ *   handoff --muted-2        -> --faint
+ *   handoff --accent (marca) -> --primary            | --accent aqui é a TINTA
+ *   handoff --accent-tint    -> --accent
+ *   handoff --line / --line-2-> --border / --border-strong
+ */
 :root {
-  --background: #f7f5ff;
-  --foreground: #221d38;
-  --card: #ffffff;
-  --card-foreground: #221d38;
-  --muted: #f0ecfb;
-  --muted-foreground: #79738f;
-  --primary: #7c3aed;
+  --background: #f4f1e8;
+  --foreground: #211d2e;
+  --foreground-soft: #3c3750;
+  --card: #fffdf8;
+  --card-foreground: #211d2e;
+  --muted: #f7f3ea;
+  --muted-foreground: #6d687c;
+  --faint: #9b95a8;
+  --primary: #6d4bd8;
+  --primary-strong: #5836bf;
+  --primary-ink: #c3aef7;
   --primary-foreground: #ffffff;
-  --accent: #ede9fe;
-  --accent-foreground: #5b21b6;
-  --border: #e9e4f7;
-  --input: #e9e4f7;
-  --ring: #8b5cf6;
-  --income: #16a34a;
-  --income-soft: #dcfce7;
-  --expense: #e11d48;
-  --expense-soft: #ffe4e6;
+  --accent: #efeafb;
+  --accent-foreground: #5836bf;
+  --border: #ece6d9;
+  --border-strong: #ded7c8;
+  --input: #ece6d9;
+  --ring: #6d4bd8;
+  /* Telas de autenticação (fundo tinta nos dois temas) */
+  --ink: #211b31;
+  --ink-2: #312a48;
+  --income: #0f8a5f;
+  --income-soft: #e2f2ea;
+  --expense: #d23b53;
+  --expense-soft: #fbe7ea;
+  --pending: #b7791f;
+  --pending-soft: #f8eed7;
+  --receive: #3563d6;
+  --receive-soft: #e6edfc;
+  --shadow-card: 0 18px 38px -24px rgba(40, 25, 80, 0.28);
+  --shadow-dock: 0 20px 44px -18px rgba(20, 10, 50, 0.45);
   --radius: 1rem;
 }
 
 .dark {
-  --background: #131020;
-  --foreground: #ece9f7;
-  --card: #1d1930;
-  --card-foreground: #ece9f7;
-  --muted: #272138;
-  --muted-foreground: #a49dbd;
+  --background: #100e18;
+  --foreground: #efecf7;
+  --foreground-soft: #cbc5dd;
+  --card: #1b1826;
+  --card-foreground: #efecf7;
+  --muted: #221e30;
+  --muted-foreground: #9b95ab;
+  --faint: #6f6987;
   --primary: #a78bfa;
+  --primary-strong: #8b6bf0;
+  --primary-ink: #c9b6ff;
   --primary-foreground: #1a1233;
-  --accent: #2a2142;
-  --accent-foreground: #d6ccff;
-  --border: #2f2846;
-  --input: #2f2846;
+  --accent: #241f39;
+  --accent-foreground: #c9b6ff;
+  --border: #2a2537;
+  --border-strong: #37324a;
+  --input: #2a2537;
   --ring: #a78bfa;
-  --income: #4ade80;
-  --income-soft: #14351f;
+  --ink: #08060e;
+  --ink-2: #1b1728;
+  --income: #34d399;
+  --income-soft: #12312580;
   --expense: #fb7185;
-  --expense-soft: #3a1420;
+  --expense-soft: #371c2580;
+  --pending: #e0a44b;
+  --pending-soft: #33290f80;
+  --receive: #7aa2f7;
+  --receive-soft: #1b244080;
+  --shadow-card: 0 22px 46px -26px rgba(0, 0, 0, 0.72);
+  --shadow-dock: 0 22px 46px -20px rgba(0, 0, 0, 0.8);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-foreground-soft: var(--foreground-soft);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-faint: var(--faint);
   --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-primary-ink: var(--primary-ink);
   --color-primary-foreground: var(--primary-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
   --color-income: var(--income);
   --color-income-soft: var(--income-soft);
   --color-expense: var(--expense);
   --color-expense-soft: var(--expense-soft);
+  --color-pending: var(--pending);
+  --color-pending-soft: var(--pending-soft);
+  --color-receive: var(--receive);
+  --color-receive-soft: var(--receive-soft);
+  --shadow-card: var(--shadow-card);
+  --shadow-dock: var(--shadow-dock);
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 0.25rem);
   --radius-sm: calc(var(--radius) - 0.5rem);
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-bricolage);
+  --font-mono: var(--font-geist-mono);
 }
 
 * {
@@ -85,6 +138,28 @@ body {
 html {
   -webkit-text-size-adjust: 100%;
   overflow-x: hidden;
+}
+
+/* ---------- Tipografia do design v2 ----------
+ * .snum = as cifras grandes (saldo, totais): display + números tabulares,
+ * para o valor não "dançar" quando muda. .tnum = tabular em textos densos. */
+.snum {
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Sobrelinha das seções: "FINANCEIRO", "A CASA"... */
+.eyebrow {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--primary);
 }
 
 /* Esconde a scrollbar horizontal do seletor de categorias etc. */

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal, X, Inbox } from "lucide-react";
 import { Sheet } from "@/components/ui/sheet";
+import { SectionTitle } from "@/components/ui/page-header";
 import { TransactionItem } from "@/components/transaction-item";
 import { DateRangeCalendar } from "@/components/date-range-calendar";
 import { cn } from "@/lib/utils";
@@ -75,14 +76,14 @@ export function MonthTransactions({
   return (
     <div className="space-y-4">
       {/* Busca + filtro */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2.5">
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-faint" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Buscar lançamento"
-            className="h-11 w-full rounded-full border border-border bg-card pl-10 pr-9 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="h-12 w-full rounded-[14px] border border-border bg-card pl-11 pr-9 text-[14.5px] text-foreground placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
           {query && (
             <button
@@ -100,10 +101,10 @@ export function MonthTransactions({
           aria-label="Filtros"
           onClick={() => setFilterOpen(true)}
           className={cn(
-            "relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border transition",
+            "relative flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] border transition active:scale-95",
             activeCount > 0
               ? "border-primary bg-accent text-primary"
-              : "border-border bg-card text-foreground hover:bg-muted",
+              : "border-border bg-card text-foreground",
           )}
         >
           <SlidersHorizontal className="h-5 w-5" />
@@ -139,16 +140,16 @@ export function MonthTransactions({
           )}
         </div>
       ) : (
-        <div className="space-y-6">
+        <div>
           {expense.length > 0 && (
-            <Section title="Saídas">
+            <Section title="Saídas" count={expense.length}>
               {expense.map((tx) => (
                 <TransactionItem key={tx.id} tx={tx} categories={categories} />
               ))}
             </Section>
           )}
           {income.length > 0 && (
-            <Section title="Entradas">
+            <Section title="Entradas" count={income.length}>
               {income.map((tx) => (
                 <TransactionItem key={tx.id} tx={tx} categories={categories} />
               ))}
@@ -243,17 +244,20 @@ export function MonthTransactions({
 
 function Section({
   title,
+  count,
   children,
 }: {
   title: string;
+  count: number;
   children: React.ReactNode;
 }) {
   return (
     <section>
-      <h2 className="mb-1 px-1 text-sm font-semibold text-muted-foreground">
-        {title}
-      </h2>
-      <div className="divide-y divide-border rounded-2xl border border-border bg-card px-4">
+      <SectionTitle>
+        {title} · {count} {count === 1 ? "lançamento" : "lançamentos"}
+      </SectionTitle>
+      {/* px-4.5 + py-0.5: as linhas trazem o próprio py-3 e o divisor */}
+      <div className="divide-y divide-border rounded-[18px] border border-border bg-card px-4.5 py-0.5">
         {children}
       </div>
     </section>

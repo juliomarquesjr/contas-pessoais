@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useMounted } from "@/lib/use-mounted";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -23,6 +24,9 @@ export function Sheet({
   const startY = useRef(0);
   const activeRef = useRef(false);
 
+  /* Portal só após montar, senão dá hydration mismatch — ver useMounted. */
+  const mounted = useMounted();
+
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -42,8 +46,6 @@ export function Sheet({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  if (typeof document === "undefined") return null;
-
   function onPointerDown(e: React.PointerEvent) {
     startY.current = e.clientY;
     activeRef.current = true;
@@ -62,6 +64,8 @@ export function Sheet({
     if (dragY > CLOSE_THRESHOLD) onClose();
     setDragY(0);
   }
+
+  if (!mounted) return null;
 
   return createPortal(
     <div

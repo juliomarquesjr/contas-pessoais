@@ -8,7 +8,7 @@ export const Input = React.forwardRef<
   <input
     ref={ref}
     className={cn(
-      "h-12 w-full rounded-xl border border-input bg-card px-4 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50",
+      "h-12 w-full rounded-[14px] border border-input bg-muted px-4 text-[15px] text-foreground placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50",
       className,
     )}
     {...props}
@@ -23,7 +23,7 @@ export const Label = React.forwardRef<
   <label
     ref={ref}
     className={cn(
-      "mb-1.5 block text-sm font-medium text-foreground",
+      "mb-2 block text-[11.5px] font-bold uppercase tracking-widest text-muted-foreground",
       className,
     )}
     {...props}
@@ -38,7 +38,7 @@ export const Select = React.forwardRef<
   <select
     ref={ref}
     className={cn(
-      "h-12 w-full appearance-none rounded-xl border border-input bg-card px-4 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50",
+      "h-12 w-full appearance-none rounded-[14px] border border-input bg-muted px-4 text-[15px] text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50",
       className,
     )}
     {...props}

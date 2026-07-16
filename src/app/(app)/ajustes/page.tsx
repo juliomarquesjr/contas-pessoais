@@ -8,7 +8,7 @@ import {
 import { InstallCard } from "@/components/install-card";
 import { ProfileCard } from "@/components/profile-card";
 import { AppearanceRow } from "@/components/appearance-row";
-import { PageHeader } from "@/components/ui/page-header";
+import { PageHeader, ScreenBody } from "@/components/ui/page-header";
 import { SettingsGroup, SettingsRow } from "@/components/ui/settings";
 import { logout } from "@/app/(app)/actions/auth";
 import { LogOut, Users, Tags } from "lucide-react";
@@ -25,56 +25,51 @@ export default async function SettingsPage() {
   if (!me) return null;
 
   return (
-    <div className="space-y-6 pb-2">
-      <PageHeader
-        eyebrow="Conta"
-        title="Ajustes"
-        subtitle="Gerencie sua conta e preferências"
-      />
+    <>
+      <PageHeader eyebrow="Conta" title="Ajustes" />
 
-      <ProfileCard me={me} householdName={householdName} />
+      <ScreenBody className="space-y-6">
+        <ProfileCard me={me} householdName={householdName} />
 
-      <SettingsGroup title="Casa">
-        <SettingsRow
-          href="/ajustes/membros"
-          icon={<Users className="h-4 w-4" />}
-          label="Membros da casa"
-          description={`${members.length} ${
-            members.length === 1 ? "pessoa" : "pessoas"
-          }`}
-        />
-        <SettingsRow
-          href="/ajustes/categorias"
-          icon={<Tags className="h-4 w-4" />}
-          label="Categorias"
-          description={`${categories.length} categorias`}
-        />
-      </SettingsGroup>
+        <SettingsGroup title="A Casa">
+          <SettingsRow
+            href="/ajustes/membros"
+            icon={<Users className="h-4 w-4" />}
+            label="Membros da casa"
+            description={`${members.length} ${
+              members.length === 1 ? "pessoa" : "pessoas"
+            }`}
+          />
+          <SettingsRow
+            href="/ajustes/categorias"
+            icon={<Tags className="h-4 w-4" />}
+            label="Categorias"
+            description={`${categories.length} categorias`}
+          />
+        </SettingsGroup>
 
-      <SettingsGroup title="Preferências">
-        <AppearanceRow accentColor={me.accentColor} theme={me.theme} />
-      </SettingsGroup>
+        <SettingsGroup title="Preferências">
+          <AppearanceRow accentColor={me.accentColor} theme={me.theme} />
+        </SettingsGroup>
 
-      <section>
-        <h2 className="mb-2 px-1 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-          Aplicativo
-        </h2>
-        <InstallCard />
-      </section>
+        <SettingsGroup title="Aplicativo">
+          <InstallCard />
+        </SettingsGroup>
 
-      <form action={logout}>
-        <button
-          type="submit"
-          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-card px-4 py-3.5 font-medium text-expense transition hover:bg-expense-soft"
-        >
-          <LogOut className="h-5 w-5" />
-          Sair da conta
-        </button>
-      </form>
+        <form action={logout}>
+          <button
+            type="submit"
+            className="flex w-full items-center justify-center gap-2 rounded-[15px] border border-border bg-card px-4 py-3.5 font-semibold text-expense transition hover:bg-expense-soft active:scale-[0.99]"
+          >
+            <LogOut className="h-5 w-5" />
+            Sair da conta
+          </button>
+        </form>
 
-      <p className="pt-1 text-center text-xs text-muted-foreground">
-        Finanças da Casa · versão 1.0.0
-      </p>
-    </div>
+        <p className="text-center text-xs text-faint">
+          Finanças da Casa · versão 1.0.0
+        </p>
+      </ScreenBody>
+    </>
   );
 }

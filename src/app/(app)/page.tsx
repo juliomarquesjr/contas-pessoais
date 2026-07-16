@@ -2,27 +2,20 @@ import Link from "next/link";
 import { requireSession } from "@/lib/session";
 import { getMonthTransactions, getCurrentUser } from "@/lib/queries";
 import { Avatar } from "@/components/ui/avatar";
-import {
-  currentMonthKey,
-  prevMonthKey,
-  monthLabel,
-} from "@/lib/dates";
+import { currentMonthKey, prevMonthKey, monthLabel } from "@/lib/dates";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { sumAmounts, formatBRL } from "@/lib/money";
-import { PageHeader } from "@/components/ui/page-header";
-import { CategoryIcon } from "@/components/category-icon";
+import { PageHeader, ScreenBody, SectionTitle } from "@/components/ui/page-header";
+import { CategorySwatch } from "@/components/ui/category-swatch";
 import {
   ArrowUpRight,
   ArrowDownRight,
-  TrendingUp,
-  TrendingDown,
   PartyPopper,
   AlertTriangle,
   Clock,
   Wallet,
-  PieChart,
-  ShoppingCart,
+  Settings,
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -45,12 +38,9 @@ export default async function HomePage() {
   const totalExpense = sumAmounts(expenseTx.map((t) => t.amount));
   const balance = totalIncome - totalExpense;
 
-  const paidExpense = sumAmounts(
-    expenseTx.filter((t) => t.paid).map((t) => t.amount),
-  );
-  const pendingExpense = totalExpense - paidExpense;
+  const pendingExpense =
+    totalExpense - sumAmounts(expenseTx.filter((t) => t.paid).map((t) => t.amount));
   const pendingBillsCount = expenseTx.filter((t) => !t.paid).length;
-  const paidRatio = totalExpense > 0 ? paidExpense / totalExpense : 1;
 
   const prevExpense = sumAmounts(
     prevTxs.filter((t) => t.type === "expense").map((t) => t.amount),
@@ -79,202 +69,183 @@ export default async function HomePage() {
 
   const isEmpty = txs.length === 0;
 
-  // Status de saúde financeira
-  const health = isEmpty
+  /* O handoff desenha só o aviso "a pagar". Mantemos os outros estados de
+     saúde da casa no mesmo slot, trocando a cor semântica. */
+  const alert = isEmpty
     ? {
         tone: "muted" as const,
         icon: Wallet,
         title: "Vamos começar?",
-        text: "Adicione suas entradas e contas do mês para acompanhar tudo aqui.",
+        text: "Adicione as entradas e contas do mês.",
+        money: false,
+        href: "/mes",
       }
     : balance < 0
       ? {
-          tone: "danger" as const,
+          tone: "expense" as const,
           icon: AlertTriangle,
-          title: "Atenção às despesas",
-          text: "Suas saídas passaram das entradas neste mês. Que tal revisar os gastos?",
+          title: "Saídas acima das entradas",
+          text: `${formatBRL(Math.abs(balance))} no vermelho este mês`,
+          money: true,
+          href: "/mes",
         }
       : pendingExpense > 0
         ? {
-            tone: "warning" as const,
+            tone: "pending" as const,
             icon: Clock,
-            title: "Você tem contas a pagar",
-            text: `Ainda faltam ${formatBRL(pendingExpense)} em ${pendingBillsCount} ${
-              pendingBillsCount === 1 ? "conta" : "contas"
-            } este mês.`,
+            title: `${pendingBillsCount} ${pendingBillsCount === 1 ? "conta a pagar" : "contas a pagar"} este mês`,
+            text: `${formatBRL(pendingExpense)} · vence em breve`,
+            money: true,
+            href: "/mes",
           }
         : {
-            tone: "success" as const,
+            tone: "income" as const,
             icon: PartyPopper,
-            title: "Tudo em dia! 🎉",
-            text: "As contas do mês estão pagas e o saldo está positivo. Mandou bem!",
+            title: "Tudo em dia!",
+            text: "As contas do mês estão pagas.",
+            money: false,
+            href: "/mes",
           };
 
-  const healthStyles = {
-    success: "from-income/15 to-transparent text-income",
-    warning: "from-amber-400/20 to-transparent text-amber-600 dark:text-amber-400",
-    danger: "from-expense/15 to-transparent text-expense",
-    muted: "from-accent to-transparent text-primary",
-  }[health.tone];
+  const toneClass = {
+    pending: "bg-pending-soft border-pending/30 text-pending",
+    expense: "bg-expense-soft border-expense/30 text-expense",
+    income: "bg-income-soft border-income/30 text-income",
+    muted: "bg-accent border-primary/30 text-primary",
+  }[alert.tone];
 
   return (
-    <div>
+    <>
       <PageHeader
         eyebrow={format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR })}
-        title={
-          <span className="flex items-center gap-1.5">
-            Olá, {name} <span className="animate-wave inline-block">👋</span>
-          </span>
+        title={`Olá, ${name}`}
+        leading={
+          <Avatar
+            src={me?.avatarUrl}
+            name={name}
+            className="h-10.5 w-10.5 shrink-0 rounded-[13px] text-[17px]"
+          />
         }
-        subtitle="A saúde financeira da casa"
         action={
-          <Link href="/ajustes" aria-label="Abrir ajustes">
-            <Avatar
-              src={me?.avatarUrl}
-              name={name}
-              className="h-12 w-12 rounded-2xl text-lg shadow-sm ring-2 ring-card"
-            />
+          <Link
+            href="/ajustes"
+            aria-label="Abrir ajustes"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition active:scale-95"
+          >
+            <Settings className="h-5 w-5" />
           </Link>
         }
       />
 
-      <div className="space-y-4">
-        {/* Card de saúde financeira */}
-        <div
-          className={cn(
-            "animate-fade-up rounded-3xl border border-border bg-gradient-to-br bg-card p-5",
-            healthStyles,
-          )}
-        >
-          <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-card shadow-sm">
-              <health.icon className="h-5 w-5" />
-            </div>
-            <div className="min-w-0">
-              <p className="font-semibold text-foreground">{health.title}</p>
-              <p className="mt-0.5 text-sm text-muted-foreground">
-                {health.text}
-              </p>
-            </div>
-          </div>
-
-          {!isEmpty && (
-            <div className="mt-4">
-              <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-                <span>Contas pagas</span>
-                <span className="font-medium text-foreground">
-                  {Math.round(paidRatio * 100)}%
-                </span>
-              </div>
-              <div className="h-2.5 overflow-hidden rounded-full bg-muted">
-                <div
-                  className="animate-grow-x h-full rounded-full bg-income"
-                  style={{ width: `${Math.round(paidRatio * 100)}%` }}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Saldo do mês */}
-        <div className="animate-fade-up rounded-3xl border border-border bg-card p-5 [animation-delay:60ms]">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
+      <ScreenBody className="space-y-4">
+        {/* Hero do saldo */}
+        <div className="animate-fade-up relative overflow-hidden rounded-[22px] bg-linear-to-br from-primary to-primary-strong p-4.5 text-primary-foreground shadow-[0_20px_40px_-22px_color-mix(in_srgb,var(--primary)_85%,transparent)]">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-10 -top-12 h-[170px] w-[170px] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.2),transparent_68%)]"
+          />
+          <div className="relative flex items-center justify-between gap-2">
+            <span className="text-[12.5px] font-medium opacity-75">
               Saldo de {monthLabel(monthKey)}
-            </p>
+            </span>
             {expenseChange !== null && (
-              <span
-                className={cn(
-                  "flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
-                  expenseChange > 0
-                    ? "bg-expense-soft text-expense"
-                    : "bg-income-soft text-income",
-                )}
-              >
+              <span className="flex shrink-0 items-center gap-1 rounded-full bg-white/16 px-2.5 py-1 font-mono text-xs font-semibold tnum">
                 {expenseChange > 0 ? (
-                  <TrendingUp className="h-3 w-3" />
+                  <ArrowUpRight className="h-3 w-3" />
                 ) : (
-                  <TrendingDown className="h-3 w-3" />
+                  <ArrowDownRight className="h-3 w-3" />
                 )}
-                {Math.abs(Math.round(expenseChange))}% vs mês passado
+                {expenseChange > 0 ? "+" : "−"}
+                {Math.abs(Math.round(expenseChange))}%
               </span>
             )}
           </div>
-          <p
-            className={cn(
-              "mt-1 text-4xl font-bold tabular-nums",
-              balance >= 0 ? "text-foreground" : "text-expense",
-            )}
-          >
+
+          <p className="snum relative mb-4 mt-1 text-[40px] leading-[0.95]">
             {formatBRL(balance)}
           </p>
 
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="rounded-2xl bg-income-soft/60 p-3">
-              <div className="flex items-center gap-1.5 text-income">
-                <ArrowUpRight className="h-4 w-4" />
-                <span className="text-xs font-medium">Entradas</span>
+          <div className="relative flex border-t border-current/20 pt-3.5 opacity-100">
+            <div className="flex-1 pr-3.5">
+              <div className="text-[10.5px] font-bold uppercase tracking-[0.1em] opacity-70">
+                Entradas
               </div>
-              <p className="mt-1 font-semibold tabular-nums text-income">
+              <div className="snum mt-1 text-[21px] leading-none">
                 {formatBRL(totalIncome)}
-              </p>
-            </div>
-            <div className="rounded-2xl bg-expense-soft/60 p-3">
-              <div className="flex items-center gap-1.5 text-expense">
-                <ArrowDownRight className="h-4 w-4" />
-                <span className="text-xs font-medium">Saídas</span>
               </div>
-              <p className="mt-1 font-semibold tabular-nums text-expense">
+            </div>
+            <div className="flex-1 border-l border-current/20 pl-3.5">
+              <div className="text-[10.5px] font-bold uppercase tracking-[0.1em] opacity-70">
+                Saídas
+              </div>
+              <div className="snum mt-1 text-[21px] leading-none">
                 {formatBRL(totalExpense)}
-              </p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Contas a pagar */}
-        {pendingExpense > 0 && (
-          <Link
-            href="/mes"
-            className="animate-fade-up flex items-center gap-3 rounded-3xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-500/20 dark:bg-amber-500/10 [animation-delay:120ms]"
-          >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
-              <Clock className="h-5 w-5" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="font-medium text-amber-800 dark:text-amber-300">
-                A pagar este mês
-              </p>
-              <p className="text-sm text-amber-700/80 dark:text-amber-400/80">
-                {formatBRL(pendingExpense)} em {pendingBillsCount}{" "}
-                {pendingBillsCount === 1 ? "conta" : "contas"}
-              </p>
-            </div>
-            <ChevronRight className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-          </Link>
-        )}
+        {/* Aviso da casa */}
+        <Link
+          href={alert.href}
+          className={cn(
+            "animate-fade-up flex items-center gap-3.5 rounded-[18px] border p-4 [animation-delay:60ms]",
+            toneClass,
+          )}
+        >
+          <span className="flex h-10.5 w-10.5 shrink-0 items-center justify-center rounded-xl bg-current/20">
+            <alert.icon className="h-5 w-5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[15.5px] font-bold">{alert.title}</span>
+            {/* mono só quando a linha é dinheiro — texto corrido em mono fica ruim */}
+            <span
+              className={cn(
+                "mt-0.5 block text-[13px] opacity-80",
+                alert.money && "font-mono tnum",
+              )}
+            >
+              {alert.text}
+            </span>
+          </span>
+          <ChevronRight className="h-4.75 w-4.75 shrink-0" />
+        </Link>
 
         {/* Onde vai o dinheiro */}
         {topCats.length > 0 && (
-          <div className="animate-fade-up rounded-3xl border border-border bg-card p-5 [animation-delay:180ms]">
-            <h2 className="mb-3 font-semibold">Onde vai o dinheiro</h2>
-            <div className="space-y-3">
+          <div className="animate-fade-up [animation-delay:120ms]">
+            <SectionTitle
+              action={
+                <Link
+                  href="/graficos"
+                  className="text-[13px] font-semibold text-primary"
+                >
+                  Ver tudo
+                </Link>
+              }
+            >
+              Onde vai o dinheiro
+            </SectionTitle>
+
+            <div className="flex flex-col gap-4.25 rounded-[20px] border border-border bg-card p-4.5 shadow-card">
               {topCats.map((c) => {
                 const pct = totalExpense > 0 ? (c.value / totalExpense) * 100 : 0;
                 return (
                   <div key={c.name}>
-                    <div className="mb-1 flex items-center gap-2 text-sm">
-                      <span
-                        className="flex h-6 w-6 items-center justify-center rounded-full"
-                        style={{ backgroundColor: c.color + "22", color: c.color }}
-                      >
-                        <CategoryIcon name={c.icon} className="h-3.5 w-3.5" />
+                    <div className="mb-2.5 flex items-center gap-3">
+                      <CategorySwatch
+                        color={c.color}
+                        icon={c.icon ?? "tag"}
+                        size="sm"
+                      />
+                      <span className="flex-1 truncate text-[15px] font-semibold">
+                        {c.name}
                       </span>
-                      <span className="flex-1 truncate">{c.name}</span>
-                      <span className="font-medium tabular-nums">
+                      <span className="font-mono text-[14.5px] font-semibold tnum">
                         {formatBRL(c.value)}
                       </span>
                     </div>
-                    <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                    <div className="h-1.5 overflow-hidden rounded-full bg-foreground/8">
                       <div
                         className="animate-grow-x h-full rounded-full"
                         style={{ width: `${pct}%`, backgroundColor: c.color }}
@@ -284,44 +255,9 @@ export default async function HomePage() {
                 );
               })}
             </div>
-            <Link
-              href="/graficos"
-              className="mt-4 flex items-center justify-center gap-1 text-sm font-medium text-primary"
-            >
-              Ver todos os gráficos <ChevronRight className="h-4 w-4" />
-            </Link>
           </div>
         )}
-
-        {/* Atalhos */}
-        <div className="grid grid-cols-3 gap-3">
-          <QuickLink href="/mes" icon={Wallet} label="Lançamentos" />
-          <QuickLink href="/graficos" icon={PieChart} label="Gráficos" />
-          <QuickLink href="/compras" icon={ShoppingCart} label="Compras" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function QuickLink({
-  href,
-  icon: Icon,
-  label,
-}: {
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="flex flex-col items-center gap-2 rounded-2xl border border-border bg-card p-4 text-center transition active:scale-[0.97]"
-    >
-      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-accent text-primary">
-        <Icon className="h-5 w-5" />
-      </span>
-      <span className="text-xs font-medium">{label}</span>
-    </Link>
+      </ScreenBody>
+    </>
   );
 }
