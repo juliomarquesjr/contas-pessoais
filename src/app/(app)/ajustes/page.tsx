@@ -8,6 +8,7 @@ import {
 import { InstallCard } from "@/components/install-card";
 import { ProfileCard } from "@/components/profile-card";
 import { AppearanceRow } from "@/components/appearance-row";
+import { DockRow } from "@/components/dock-editor";
 import { PageHeader, ScreenBody } from "@/components/ui/page-header";
 import { SettingsGroup, SettingsRow } from "@/components/ui/settings";
 import { logout } from "@/app/(app)/actions/auth";
@@ -50,6 +51,7 @@ export default async function SettingsPage() {
 
         <SettingsGroup title="Preferências">
           <AppearanceRow accentColor={me.accentColor} theme={me.theme} />
+          <DockRow dock={me.dockItems} />
         </SettingsGroup>
 
         <SettingsGroup title="Aplicativo">

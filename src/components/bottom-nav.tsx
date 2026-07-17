@@ -2,30 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  CalendarDays,
-  PieChart,
-  ShoppingCart,
-  Settings,
-  Home,
-  type LucideIcon,
-} from "lucide-react";
+import { NavIcon } from "@/components/nav-icon";
+import { dockItems } from "@/lib/dock";
 import { cn } from "@/lib/utils";
-
-const items: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/", label: "Início", icon: Home },
-  { href: "/mes", label: "Mês", icon: CalendarDays },
-  { href: "/graficos", label: "Gráficos", icon: PieChart },
-  { href: "/compras", label: "Compras", icon: ShoppingCart },
-  { href: "/ajustes", label: "Ajustes", icon: Settings },
-];
 
 /**
  * Dock flutuante do handoff v2: pílula centralizada, translúcida com blur.
  * O item ativo vira pílula preenchida (ícone + rótulo); os demais só ícone.
+ *
+ * Os itens vêm da preferência do membro (lib/dock.ts) — cabem 5 em 390px.
  */
-export function BottomNav() {
+export function BottomNav({ dock }: { dock?: string | null }) {
   const pathname = usePathname();
+  const items = dockItems(dock);
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
@@ -36,7 +25,7 @@ export function BottomNav() {
           const active = isActive(it.href);
           return (
             <Link
-              key={it.href}
+              key={it.key}
               href={it.href}
               aria-label={it.label}
               aria-current={active ? "page" : undefined}
@@ -47,7 +36,10 @@ export function BottomNav() {
                   : "w-12.5 text-faint",
               )}
             >
-              <it.icon className={cn("h-5 w-5", active && "shrink-0")} />
+              <NavIcon
+                name={it.icon}
+                className={cn("h-5 w-5", active && "shrink-0")}
+              />
               {active && (
                 <span className="text-[13px] font-semibold">{it.label}</span>
               )}

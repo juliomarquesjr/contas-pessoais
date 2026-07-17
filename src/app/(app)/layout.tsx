@@ -39,7 +39,7 @@ export default async function AppLayout({
       {/* pb-28 abre espaço para a dock flutuante; o padding lateral fica em
           cada tela (o cabeçalho é sticky e sangra até a borda). */}
       <main className="flex-1 pb-28">{children}</main>
-      <BottomNav />
+      <BottomNav dock={me?.dockItems} />
     </div>
   );
 }

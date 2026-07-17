@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { requireSession } from "@/lib/session";
+import { parseDockChoices, serializeDockChoices } from "@/lib/dock";
 
 export type ProfileState = { error?: string; ok?: boolean } | undefined;
 
@@ -84,6 +85,20 @@ export async function updateAppearance(formData: FormData): Promise<void> {
   if (Object.keys(patch).length === 0) return;
 
   await db.update(users).set(patch).where(eq(users.id, userId));
+  revalidateAll();
+}
+
+/**
+ * Itens escolhidos para a dock. Normaliza pelo lib/dock (descarta chave
+ * desconhecida, remove duplicata e corta no máximo) antes de gravar.
+ */
+export async function updateDock(formData: FormData): Promise<void> {
+  const { userId } = await requireSession();
+  const raw = formData.get("dockItems");
+  if (typeof raw !== "string") return;
+
+  const value = serializeDockChoices(parseDockChoices(raw));
+  await db.update(users).set({ dockItems: value }).where(eq(users.id, userId));
   revalidateAll();
 }
 

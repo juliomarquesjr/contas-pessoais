@@ -22,7 +22,7 @@ export function Fab({
       onClick={onClick}
       aria-label={label}
       className={cn(
-        "fixed bottom-[100px] right-5 z-30 flex h-14 w-14 items-center justify-center rounded-2xl",
+        "fixed bottom-25 right-5 z-30 flex h-14 w-14 items-center justify-center rounded-2xl",
         "bg-linear-to-br from-primary to-primary-strong text-primary-foreground",
         "shadow-[0_16px_32px_-12px_color-mix(in_srgb,var(--primary)_85%,transparent)]",
         "transition active:scale-95",

@@ -8,6 +8,9 @@ import {
   shoppingListItems,
   users,
   households,
+  vehicles,
+  odometerReadings,
+  maintenanceItems,
 } from "@/lib/schema";
 import { monthRange } from "@/lib/dates";
 
@@ -175,6 +178,7 @@ export type CurrentUser = {
   avatarUrl: string | null;
   accentColor: string | null;
   theme: string | null;
+  dockItems: string | null;
 };
 
 export async function getCurrentUser(
@@ -189,9 +193,78 @@ export async function getCurrentUser(
       avatarUrl: users.avatarUrl,
       accentColor: users.accentColor,
       theme: users.theme,
+      dockItems: users.dockItems,
     })
     .from(users)
     .where(eq(users.id, userId))
     .limit(1);
   return rows[0] ?? null;
+}
+
+// ----- Manutenção veicular -----
+
+export async function getVehicles(householdId: number) {
+  return db
+    .select()
+    .from(vehicles)
+    .where(eq(vehicles.householdId, householdId))
+    .orderBy(asc(vehicles.name));
+}
+
+export async function getVehicle(householdId: number, vehicleId: number) {
+  const rows = await db
+    .select()
+    .from(vehicles)
+    .where(and(eq(vehicles.id, vehicleId), eq(vehicles.householdId, householdId)))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+export async function getMaintenanceItems(vehicleId: number) {
+  return db
+    .select()
+    .from(maintenanceItems)
+    .where(eq(maintenanceItems.vehicleId, vehicleId))
+    .orderBy(asc(maintenanceItems.name));
+}
+
+/** Leituras mais recentes primeiro. */
+export async function getReadings(vehicleId: number, limit = 24) {
+  return db
+    .select({
+      id: odometerReadings.id,
+      km: odometerReadings.km,
+      date: odometerReadings.date,
+    })
+    .from(odometerReadings)
+    .where(eq(odometerReadings.vehicleId, vehicleId))
+    .orderBy(desc(odometerReadings.date), desc(odometerReadings.id))
+    .limit(limit);
+}
+
+export type VehicleWithState = {
+  vehicle: typeof vehicles.$inferSelect;
+  items: (typeof maintenanceItems.$inferSelect)[];
+  readings: { id: number; km: number; date: string }[];
+};
+
+/**
+ * Tudo que as telas de manutenção precisam, numa consulta por veículo.
+ * A avaliação de status é pura e fica em lib/maintenance.ts.
+ */
+export async function getVehiclesWithState(
+  householdId: number,
+): Promise<VehicleWithState[]> {
+  const list = await getVehicles(householdId);
+  if (!list.length) return [];
+
+  return Promise.all(
+    list.map(async (vehicle) => {
+      const [items, readings] = await Promise.all([
+        getMaintenanceItems(vehicle.id),
+        getReadings(vehicle.id),
+      ]);
+      return { vehicle, items, readings };
+    }),
+  );
 }

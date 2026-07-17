@@ -71,11 +71,23 @@ Dois cuidados aprendidos na marra:
 - **useMounted** (`lib/use-mounted.ts`) — conteúdo só-cliente (portais) sem
   hydration mismatch. Não guarde portal com `typeof document`.
 
-## Navegação
-Dock **flutuante** centralizada, 5 itens (Início, Mês, Gráficos, Compras,
-Ajustes), translúcida com blur. O item ativo vira pílula preenchida com o
-acento (ícone + rótulo); os demais, só ícone. Ações primárias (＋) são FAB
-no canto inferior direito, acima da dock.
+## Navegação (`src/lib/dock.ts`)
+Dock **flutuante** centralizada, translúcida com blur. O item ativo vira
+pílula preenchida com o acento (ícone + rótulo); os demais, só ícone. Ações
+primárias (＋) são FAB no canto inferior direito, acima da dock.
+
+**Cabem 5 itens** — a 390px, o sexto encosta nas bordas. Como o app tem mais
+funcionalidades que isso, a dock é **personalizável por membro**:
+- **Início é fixo e sempre primeiro.** A gaveta mora nele; se desse para
+  tirá-lo, quem tirasse perderia o acesso a tudo que não estivesse na dock.
+- Os outros 4 saem de `CHOOSABLE` (Mês, Gráficos, Compras, Veículos, Ajustes),
+  editáveis em Ajustes › Barra de navegação, persistidos em `users.dock_items`.
+- A **gaveta do Início** (`apps-drawer.tsx`) lista *todas* as funcionalidades,
+  sempre. É ela o índice do app — não a dock. Recurso novo entra em
+  `NAV_ITEMS` e aparece na gaveta sem depender de escolha do usuário.
+
+Numa tela fora da dock, nenhum item fica aceso — é esperado; o cabeçalho diz
+onde você está.
 
 ## Animações (`globals.css`)
 `animate-fade-up` (entrada de cards, com `[animation-delay:*]` em cascata),

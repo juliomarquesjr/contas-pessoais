@@ -28,6 +28,7 @@ import {
   Fish,
   IceCream,
   Car,
+  Truck,
   Bus,
   TramFront,
   Bike,
@@ -131,6 +132,8 @@ export const ICON_LIBRARY: IconDef[] = [
 
   // Transporte
   { name: "car", Icon: Car, keywords: "carro transporte veiculo" },
+  { name: "truck", Icon: Truck, keywords: "caminhao van carga veiculo" },
+  { name: "motorcycle", Icon: Bike, keywords: "moto motocicleta veiculo" },
   { name: "bus", Icon: Bus, keywords: "onibus transporte publico" },
   { name: "train", Icon: TramFront, keywords: "trem metro transporte" },
   { name: "bike", Icon: Bike, keywords: "bicicleta bike" },

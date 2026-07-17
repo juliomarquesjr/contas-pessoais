@@ -74,6 +74,22 @@ export function lastMonthKeys(key: string, count: number): string[] {
   return keys;
 }
 
+/**
+ * "2026-07-23" -> Date local.
+ *
+ * `new Date("2026-07-23")` parseia como UTC e, em UTC-3, volta um dia —
+ * a data aparece 22/07. Colunas DATE do Postgres chegam como string, então
+ * todo parse delas passa por aqui.
+ */
+export function parseISODate(iso: string): Date {
+  return parse(iso, "yyyy-MM-dd", new Date());
+}
+
 export function formatDateBR(iso: string): string {
-  return format(parse(iso, "yyyy-MM-dd", new Date()), "dd/MM", { locale: ptBR });
+  return format(parseISODate(iso), "dd/MM", { locale: ptBR });
+}
+
+/** "2026-07-23" -> "23 jul" */
+export function formatDayMonth(d: Date): string {
+  return format(d, "dd MMM", { locale: ptBR });
 }
